@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                android:background="@color/md_white_1000"
+                tools:context=".Activity_ajustes">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+
+    </android.support.design.widget.AppBarLayout>
+
+  <!--  tools:background="@color/colorCardViewUsuarios"
+    android:background="@color/background"-->
+
+
+<!--    <ImageButton
+        android:id="@+id/imgFoto"
+        android:layout_width="175dp"
+        android:layout_height="175dp"
+        android:layout_marginTop="26dp"
+
+        android:scaleType="centerCrop"
+        android:background="@drawable/redondea_img"
+        android:src="@drawable/ic_action"
+        android:layout_below="@+id/appBarLayout"
+        android:layout_centerHorizontal="true"/>-->
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imgFoto"
+        android:layout_width="175dp"
+        android:layout_height="175dp"
+        android:layout_marginTop="26dp"
+
+        android:scaleType="centerCrop"
+
+        android:src="@drawable/ic_action"
+        android:layout_below="@+id/appBarLayout"
+        android:layout_centerHorizontal="true"/>
+
+
+    <TextView
+        android:id="@+id/txtinfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imgFoto"
+        android:layout_centerHorizontal="true"
+        android:text="Haz click en la imagen para modificarla"/>
+
+    <EditText
+        android:id="@+id/tvNombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/txtinfo"
+        android:layout_marginTop="48dp"
+        android:ems="10"
+
+        android:inputType="textPersonName"
+        android:enabled="false"
+        />
+
+    <EditText
+        android:id="@+id/tvNick"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvNombre"
+        android:layout_marginTop="26dp"
+        android:ems="10"
+
+        android:inputType="textEmailAddress"
+        android:enabled="false"/>
+
+    <Button
+        android:id="@+id/btnSetup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="10dp"
+        android:background="@drawable/degradado_btn"
+        android:textColor="@color/md_white_1000"
+        android:text="Modificar perfil"/>
+</RelativeLayout>

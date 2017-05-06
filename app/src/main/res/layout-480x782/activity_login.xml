@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@android:color/white"
+              android:layout_marginTop="3dp"
+              android:orientation="vertical"
+              >
+
+
+    <LinearLayout
+        android:id="@+id/layoutHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/image1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Rellena los campos para entrar"
+            android:textAlignment="center"
+            android:textSize="17dp"
+            android:textStyle="bold|italic"
+
+            />
+
+
+    </LinearLayout>
+
+
+
+
+    <EditText
+        android:id="@+id/txtEmail"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:textSize="15dp"
+        android:layout_gravity="center"
+
+        android:contextClickable="false"
+        android:hint="Introduce un email"
+        android:inputType="textEmailAddress"
+        android:textAlignment="center"
+        android:textColorHint="#c0607d8b"
+        android:textStyle="bold|italic"
+        android:typeface="sans"/>
+
+
+    <EditText
+        android:id="@+id/txtPassword"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="3dp"
+        android:ems="10"
+        android:textSize="15dp"
+        android:hint="Introduce una password"
+        android:inputType="textPassword"
+        android:textAlignment="center"
+
+        android:textColorHint="#c0607d8b"
+        android:textStyle="bold|italic"
+        android:typeface="sans"/>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="300dp"
+        android:layout_height="2dp"
+        android:layout_below="@+id/txtPassword"
+        android:layout_gravity="center"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorPrimary"/>
+
+    <LinearLayout
+        android:id="@+id/layoutHorizontal2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_margin="5dp"
+            android:src="@drawable/image1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_gravity="center"
+            android:text="Al registrarte debes introducir un alias de tu usuario"
+android:textSize="12sp"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textStyle="italic"
+
+            />
+
+
+    </LinearLayout>
+
+
+    <EditText
+        android:id="@+id/txtNick"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:ems="10"
+        android:hint="Introduce un nick"
+        android:inputType="text"
+        android:textAlignment="center"
+android:textSize="13sp"
+        android:textColorHint="#c0607d8b"
+        android:textStyle="bold"
+        />
+
+    <View
+
+        android:layout_width="340dp"
+        android:layout_height="2dp"
+        android:layout_below="@+id/txtNick"
+        android:layout_gravity="center"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorPrimary"/>
+
+
+
+
+
+
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorPrimaryDark"
+
+        android:text="Login"
+        android:textColor="#ffffff"
+        android:typeface="sans"
+        />
+
+    <View
+        android:id="@+id/divider3"
+        android:layout_width="140dp"
+        android:layout_height="2dp"
+        android:layout_below="@+id/btnRegistrar"
+        android:layout_gravity="center"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/colorPrimary"/>
+
+
+
+    <Button
+        android:id="@+id/btnRegistrar"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="0dp"
+        android:background="@color/colorAccent"
+
+        android:text="Registro"
+        android:textColor="#ffffff"
+        android:typeface="sans"
+        />
+
+    <ProgressBar
+        style="?android:attr/textAppearanceSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/barraProgreso"
+        android:layout_gravity="center"
+        android:visibility="invisible" />
+
+    <CheckBox
+        android:id="@+id/recordar_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnLogin"
+        android:layout_marginTop="2dp"
+        android:checked="true"
+
+        android:text="Recordarme"
+
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        />
+
+
+    <TextView
+        android:id="@+id/olvidar_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:text="¿Olvidaste tu Contraseña?"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+
+
+        />
+
+
+
+
+
+</LinearLayout>

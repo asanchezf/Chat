@@ -1,0 +1,6 @@
+<resources>
+    <!-- se pone en values-sw240dp para pantallas con resolución de 240dp de ancho:s4mini, Experia E3-->
+    <dimen name="activity_horizontal_margin">2dp</dimen>
+    <dimen name="activity_vertical_margin">0dp</dimen>
+    <dimen name="vertical_margin_image">10dp</dimen>
+    </resources>

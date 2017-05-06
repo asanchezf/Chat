@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="com.example.antonio.chat.Activity_ajustes"
+      xmlns:yourapp="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/action_modificar_perfil"
+          android:title="Modificar perfil"
+          android:visible="true"
+          android:icon="@android:drawable/ic_menu_edit"
+          yourapp:showAsAction="always"
+          android:orderInCategory="100" />
+</menu>

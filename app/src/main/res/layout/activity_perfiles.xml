@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="290dp"
+              android:layout_height="290dp"
+              android:orientation="vertical"
+              android:padding="2dp"
+              android:background="@android:color/white"
+              tools:context=".Activity_Perfiles"
+    >
+
+    <ImageView
+        android:id="@+id/imgPerfiles"
+        android:layout_width="match_parent"
+        android:layout_height="255dp"
+        android:layout_marginBottom="2dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/chat"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/md_grey_500_50"
+        android:orientation="horizontal"
+        >
+
+        <ImageButton
+            android:id="@+id/btnLlamar"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:background="@color/colorPrimaryDark"
+            app:srcCompat="@android:drawable/sym_action_call"/>
+
+        <ImageButton
+            android:id="@+id/btnCerrar"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:background="@color/md_white_1000_10"
+            app:srcCompat="@drawable/ic_done"/>
+
+
+        <ImageButton
+            android:id="@+id/btnInfo"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/colorAccent"
+            app:srcCompat="@android:drawable/star_big_on"/>
+
+
+    </LinearLayout>
+</LinearLayout>
