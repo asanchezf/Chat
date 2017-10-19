@@ -23,27 +23,12 @@
 
     </android.support.design.widget.AppBarLayout>
 
-  <!--  tools:background="@color/colorCardViewUsuarios"
-    android:background="@color/background"-->
-
-
-<!--    <ImageButton
-        android:id="@+id/imgFoto"
-        android:layout_width="175dp"
-        android:layout_height="175dp"
-        android:layout_marginTop="26dp"
-
-        android:scaleType="centerCrop"
-        android:background="@drawable/redondea_img"
-        android:src="@drawable/ic_action"
-        android:layout_below="@+id/appBarLayout"
-        android:layout_centerHorizontal="true"/>-->
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imgFoto"
         android:layout_width="175dp"
         android:layout_height="175dp"
-        android:layout_marginTop="26dp"
+        android:layout_marginTop="17dp"
 
         android:scaleType="centerCrop"
 
@@ -58,34 +43,73 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/imgFoto"
         android:layout_centerHorizontal="true"
-        android:text="Haz click en la imagen para modificarla"/>
+        android:textSize="12sp"
+        android:text="@string/haz_click_en_la_imagen_para_modificarla"/>
 
     <EditText
         android:id="@+id/tvNombre"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/txtinfo"
-        android:layout_marginTop="48dp"
-        android:ems="10"
-
+        android:layout_marginTop="19dp"
+        android:textSize="16sp"
+        android:typeface="sans"
+        android:textStyle="bold|italic"
+        android:paddingLeft="10dp"
         android:inputType="textPersonName"
         android:enabled="false"
-        />
+        android:layout_below="@+id/txtinfo"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
 
     <EditText
         android:id="@+id/tvNick"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/tvNombre"
-        android:layout_marginTop="26dp"
-        android:ems="10"
-
+        android:textSize="16sp"
+        android:typeface="sans"
+        android:textStyle="bold|italic"
+        android:paddingLeft="10dp"
         android:inputType="textEmailAddress"
-        android:enabled="false"/>
+        android:enabled="false"
+        android:layout_below="@+id/tvNombre"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="19dp"
+        android:layout_below="@+id/tvNick">
+
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:typeface="sans"
+            android:textStyle="italic"
+
+
+            android:text="Tiempo borrado aut.:"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:paddingLeft="10dp"
+            />
+
+        <Spinner
+            android:id="@+id/spinnertiempo"
+            android:layout_width="wrap_content"
+            android:layout_height="22dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginStart="1dp"
+            android:background="@color/md_white_1000"/>
+
+
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/btnSetup"

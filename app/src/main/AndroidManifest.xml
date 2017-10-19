@@ -33,75 +33,57 @@
         <!-- [END fcm_default_icon] -->
 
 
-
-
-
         <activity
             android:name=".Activity_chats"
             android:parentActivityName=".Activity_usuarios"
             android:theme="@style/BocadillosChat"
             android:windowSoftInputMode="stateHidden">
+            <!--PARA QUE PUEDA SER LLAMADA DESDE OTRA APP SE CREA JN INTENT PROPIO-->
+            <intent-filter>
+                <action android:name="android.intent.accion.ABRIR_ACTIVITY_CHATS"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+             </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Activity_usuarios"/>
-            <!-- - Autogenera botón para regresar a la activity padre -->
-
-
-
-
         </activity>
         <activity android:name=".Activity_Login">
         </activity>
-    <activity
-        android:name=".Activity_usuarios"
-        android:theme="@style/AppTheme.NoActionBar">
+        <activity
+            android:name=".Activity_usuarios"
+            android:theme="@style/AppTheme.NoActionBar">
 
+            <!-- Para poder compartir desde un navegador web-->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:mimeType="text/plain"/>
+                <data android:mimeType="text/html"/>
+            </intent-filter>
 
-        <!-- Para poder compartir-->
-        <intent-filter>
-            <action android:name="android.intent.action.SEND"/>
-            <category android:name="android.intent.category.DEFAULT"/>
-            <category android:name="android.intent.category.BROWSABLE" />
-            <data android:mimeType="text/plain"/>
-            <data android:mimeType="text/html"/>
-        </intent-filter>
+        </activity>
 
-        <!-- Para poder recibir-->
-        <intent-filter>
-            <action android:name="recibir.action.chat.usuarios"/>
-            <category android:name="android.intent.category.DEFAULT"/>
-            <category android:name="android.intent.category.BROWSABLE" />
-            <data android:mimeType="text/plain"/>
-            <data android:mimeType="text/html"/>
-        </intent-filter>
-
-     <!--   <receiver android:name=".Activity_usuarios" android:exported="true"/>
-        <action android:name="Intent.ACTION_SEND" />-->
-
-
-    </activity>
-
-
-
-    <activity
-        android:name=".Activity_ajustes"
-        android:theme="@style/AppTheme.NoActionBar"
-        android:parentActivityName=".Activity_usuarios">
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".Activity_usuarios"/>
-    </activity>
+        <activity
+            android:name=".Activity_ajustes"
+            android:parentActivityName=".Activity_usuarios"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Activity_usuarios"/>
+        </activity>
 
         <!--PARA LAS IMÁGENES: com.theartofdev.edmodo:android-image-cropper:2.3.+-->
-        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-                  android:theme="@style/Base.Theme.AppCompat"/>
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"/>
 
         <activity
             android:name=".Inicio"
             android:theme="@style/Inicio">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -112,11 +94,9 @@
             android:parentActivityName=".Activity_usuarios"
             android:theme="@style/CustomPopUp"
             android:windowSoftInputMode="stateHidden">
-
-
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activity_usuarios" />
+                android:value=".Activity_usuarios"/>
         </activity>
 
 
@@ -126,7 +106,7 @@
             </intent-filter>
         </service>
         <service android:name="servicios.FCMInstanceIdService">
-            <intent-filter>
++            <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>

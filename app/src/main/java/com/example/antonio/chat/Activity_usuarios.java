@@ -3,7 +3,10 @@ package com.example.antonio.chat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,18 +14,23 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import adaptadores.AdaptadorUsuariosViewHolder;
 import modelos.Usuarios;
+import referencias.FirebaseHelper;
 import referencias.MisReferencias;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -30,18 +38,17 @@ import static referencias.MisReferencias.REFERENCIA_USUARIOS;
 
 public class Activity_usuarios extends AppCompatActivity {
 
-    RecyclerView lista;
-    Toolbar toolbar;
-
-    FirebaseRecyclerAdapter mAdapterUsuarios;
-    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();//BB.DD.
-
-    DatabaseReference ref;
-    //Query query;
-
-    String nick_propio = "";
-    String email_propio = "";
-    private static String NOHAYCHAT="";
+    private static final String LOGTAG ="android-fcm" ;
+    private FirebaseRecyclerAdapter mAdapterUsuarios;
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();//BB.DD.
+    private DatabaseReference refUsuarios;
+    private DatabaseReference refUsuarioConectado;
+    //private Query mQuery;
+    private String nick_propio = "";
+    private String email_propio = "";
+    private String urlCompartido = "";
+    private RecyclerView lista;
+    private int tiempoConfiguradoEmisor=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,25 +57,24 @@ public class Activity_usuarios extends AppCompatActivity {
         setTitle("Usuarios para chatear");
 
         damePreferencias();
-        ref = firebaseDatabase.getReference(REFERENCIA_USUARIOS);//Trae todos por orden alfabético por defecto
-        //query = ref.orderByChild("nick");//Trae todos
+        refUsuarios = firebaseDatabase.getReference(REFERENCIA_USUARIOS);//Trae todos por orden alfabético por defecto
+        //mQuery = ref.orderByPriority();//Trae todos
 
+       /* LA APP ES LLAMADA DESDE UN NAVEGADOR WEB COMPARTIENDO UNA URL*/
+        Intent intentComparteURL = getIntent();
+        urlCompartido = intentComparteURL.getStringExtra(Intent.EXTRA_TEXT);
         inicializarComponentes();
-
-
-
     }
 
     private void inicializarComponentes() {
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setSubtitle(email_propio);
-        mAdapterUsuarios = new AdaptadorUsuariosViewHolder(R.layout.fila_recyclerview_usuarios, ref);
 
-        lista = (RecyclerView) findViewById(R.id.listaUsuarios);
-        //lista.setHasFixedSize(true);//Aumenta el rendimiento cuando el tamaño sea fijo
-        lista.setLayoutManager(new LinearLayoutManager(this));
+        /*SI LA LLAMADA SE HACE DESDE ACTIVITYMAIN INICIALIZAMOS ESTE ADAPTADOR PARA EL RECYCLERVIEW*/
+
+        //configuraAdaptador();
+
 
 
 
@@ -84,17 +90,97 @@ public class Activity_usuarios extends AppCompatActivity {
             }
         };*/
 
+
+
+
+        traeTimeBorradoEmisor(nick_propio);
+
+     /*   if (urlCompartido != null) {
+            avisoCompartirUrl();
+        }*/
+
+    }
+
+    private void configuraAdaptador() {
+
+        if (urlCompartido == null) {
+            mAdapterUsuarios = new AdaptadorUsuariosViewHolder(R.layout.fila_recyclerview_usuarios, refUsuarios,tiempoConfiguradoEmisor);
+            Log.i(LOGTAG, "Paso miTiempoBorradoEmisor.Activity_Usuarios"+tiempoConfiguradoEmisor);
+
+        } else {/*SI LA LLAMADA SE HACE DESDE UN NAVEGADOR WEB INICIALIZAMOS ESTE ADAPTADOR PARA EL RECYCLERVIEW PASÁNDOLE LA URL DE LA WEB QUE QUEREMOS COMPARTIR...*/
+            mAdapterUsuarios = new AdaptadorUsuariosViewHolder(R.layout.fila_recyclerview_usuarios, refUsuarios, urlCompartido,tiempoConfiguradoEmisor);
+            Log.i(LOGTAG, "Paso miTiempoBorradoEmisor.Activity_Usuarios "+tiempoConfiguradoEmisor);
+        }
+
+        lista = (RecyclerView) findViewById(R.id.listaUsuarios);
+        //lista.setHasFixedSize(true);//Aumenta el rendimiento cuando el tamaño sea fijo
+        lista.setLayoutManager(new LinearLayoutManager(this));
+        lista.setHasFixedSize(true);//El tamaño va a cambiar pocas veces...
         lista.setAdapter(mAdapterUsuarios);
         mAdapterUsuarios.notifyDataSetChanged();
-        //lista.scrollToPosition(mAdapterUsuarios.getItemCount() - 1);
+        lista.scrollToPosition(0);//Le situamos en la primera posición
     }
-    private void damePreferencias(){
+
+    private void traeTimeBorradoEmisor(final String nick_propio) {
+
+        FirebaseHelper firebaseauxiliar = FirebaseHelper.getInstance();
+        refUsuarioConectado= firebaseauxiliar.getDatosReceptor(nick_propio);
+
+        refUsuarioConectado.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() == null) {
+                    Toast.makeText(Activity_usuarios.this, "NO hay datos...", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Usuarios usuarios = dataSnapshot.getValue(Usuarios.class);
+                tiempoConfiguradoEmisor = usuarios.getTimeBorrado();
+
+
+                configuraAdaptador();
+
+                if (urlCompartido != null) {
+                    avisoCompartirUrl();
+                }
+
+
+
+
+                //Toast.makeText(Activity_usuarios.this, "Tiempo configurado emisor: " + nick_propio + " " + tiempoConfiguradoEmisor, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("ERROR CARGANDO VALOR TIEMBORRADO", databaseError.getMessage());
+            }
+        });
+    }
+
+    private void avisoCompartirUrl() {
+        //Se carga desde traeTimeBorradoEmisor porque  el context que necesita la Snackbar se crea después del resultado
+        //del onDataChange del addListenerForSingleValueEvent de Firebase
+        Snackbar snack = Snackbar.make(lista, R.string.avisoelegirusuariocompartir,
+                Snackbar.LENGTH_LONG);
+        ViewGroup group = (ViewGroup) snack.getView();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            group.setBackground(ContextCompat.getDrawable(this,R.drawable.degradado));
+        }else{
+            group.setBackgroundColor(ContextCompat.getColor(this,R.color.colorPrimaryDark));
+        }
+        snack.setDuration(10000);
+        snack.show();
+    }
+
+    private void damePreferencias() {
         SharedPreferences prefs = getSharedPreferences("ficheroconfiguracion", Context.MODE_PRIVATE);
         nick_propio = prefs.getString("nick", "Usuario");//Valor por defecto Usuario que se aplica si no encuentra nada
         email_propio = prefs.getString("email", "email@gmail.com");
         MisReferencias.USUARIO_CONECTADO = email_propio;//Por si entra con la sesión abierta...
 
     }
+
     @Override//Añadimos fuente
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
@@ -111,11 +197,9 @@ public class Activity_usuarios extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-
         if (id == R.id.action_logout) {
             cerrarSesion();
         }
-
 
         if (id == R.id.action_ajustes) {
             ajustes();
@@ -126,7 +210,7 @@ public class Activity_usuarios extends AppCompatActivity {
 
     private void ajustes() {
 
-    Intent intent=new Intent(this,Activity_ajustes.class);
+        Intent intent = new Intent(this, Activity_ajustes.class);
         startActivity(intent);
     }
 
@@ -138,10 +222,10 @@ public class Activity_usuarios extends AppCompatActivity {
                 | Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-        cambiaEstadoUsuario(nick_propio,false);
+        cambiaEstadoUsuario(nick_propio, false);
         finish();
 
-        Toast.makeText(this,"La Sesión se ha cerrado",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "La Sesión se ha cerrado", Toast.LENGTH_SHORT).show();
 
       /*  Snackbar snack = Snackbar.make(view, "Su terminal no tiene habilitada ninguna conexión wifi para poder acceder a este recurso.", Snackbar.LENGTH_LONG);
         ViewGroup group = (ViewGroup) snack.getView();
@@ -151,24 +235,19 @@ public class Activity_usuarios extends AppCompatActivity {
 
     }
 
-    private void cambiaEstadoUsuario(String usuario,boolean estado){
+    private void cambiaEstadoUsuario(String usuario, boolean estado) {
 
-        /*DatabaseReference db=databaseReference.getRoot().child(REFERENCIA_USUARIOS).child(usuario).child("online");
-        db.setValue(Usuarios.ONLINE);*/
         //Se navega hasta el usuario logado y se modificar su campo online
-        DatabaseReference databaseReference= FirebaseDatabase.getInstance().getReference();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        DatabaseReference db=databaseReference.getRoot().child(REFERENCIA_USUARIOS).child(usuario);
-         Map<String, Object> update = new HashMap<>();
+        DatabaseReference db = databaseReference.getRoot().child(REFERENCIA_USUARIOS).child(usuario);
+        Map<String, Object> update = new HashMap<>();
         if (!estado)
-        update.put("online", Usuarios.OFFLINE);
+            update.put("online", Usuarios.OFFLINE);
         else
             update.put("online", Usuarios.ONLINE);
 
         db.updateChildren(update);
-
-
-
 
         //Toast.makeText(this,"CambiaEstado Activity_Usuarios",Toast.LENGTH_SHORT).show();
         Log.i("Activity_usuarios", "CambiaEstado Activity_Usuarios");
@@ -176,26 +255,25 @@ public class Activity_usuarios extends AppCompatActivity {
     }
 
     private void cambiaActivityUsuario(String usuario) {
-        //FirebaseHelper firebaseauxiliar;
-        //firebaseauxiliar = FirebaseHelper.getInstance();
-        //firebaseauxiliar.changeUserConnectionStatus(Usuarios.ONLINE);
-        //DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("Usuarios");
+
         DatabaseReference databaseReferenceEstado = FirebaseDatabase.getInstance().getReference();
         //DatabaseReference referenciaUsuario=null;
         DatabaseReference db = databaseReferenceEstado.getRoot().child(REFERENCIA_USUARIOS).child(usuario);
 
         Map<String, Object> update = new HashMap<>();
 
-        update.put("chateaCon",NOHAYCHAT);
+        String NOHAYCHAT = "";
+        update.put("chateaCon", NOHAYCHAT);
 
         db.updateChildren(update);
         //Toast.makeText(this,"cambiaestado - Activity_Chats",Toast.LENGTH_SHORT).show();
         Log.i("Activity_Chats", "cambiaestado - Activity_Chats");
     }
+
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
-        cambiaEstadoUsuario(nick_propio,true);
+        cambiaEstadoUsuario(nick_propio, true);
         cambiaActivityUsuario(nick_propio);
         //mAdapterUsuarios.notifyDataSetChanged();
         //Toast.makeText(this,"onResume Activity_Usuarios",Toast.LENGTH_SHORT).show();
@@ -216,7 +294,7 @@ public class Activity_usuarios extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         //finish();
-        cambiaEstadoUsuario(nick_propio,false);
+        cambiaEstadoUsuario(nick_propio, false);
         //Toast.makeText(this,"onDestroy Activity_Usuarios",Toast.LENGTH_SHORT).show();
         Log.i("Activity_usuarios", "onDestroy Activity_Usuarios");
 
@@ -225,15 +303,13 @@ public class Activity_usuarios extends AppCompatActivity {
         }*/
 
 
-        if (mAdapterUsuarios != null ) {
+        if (mAdapterUsuarios != null) {
             mAdapterUsuarios.cleanup();
         }
 
-        if (firebaseDatabase != null ) {
-            firebaseDatabase=null;
+        if (firebaseDatabase != null) {
+            firebaseDatabase = null;
         }
-
-
 
     }
 

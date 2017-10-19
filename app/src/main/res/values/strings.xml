@@ -3,4 +3,33 @@
     <string name="estado">En línea</string>
     <string name="mi_perfil">Mi Perfil</string>
     <string name="cerrar_sesi_n">Cerrar Sesión</string>
+    <string name="compartirlink">Compartir link con</string>
+    <string name="compartirurl">¿Quieres compartir esta url?</string>
+    <string name="eliminarmensaje">Eliminar mensaje</string>
+    <string name="textoelimininarmensaje">¿Estás seguro de eliminar este mensaje del Chat?</string>
+    <string name="confirmeliminarmensaje">Mensaje eliminado</string>
+    <string name="previocompartirlink">Compartir link con…</string>
+    <string name="avisoelegirusuariocompartir">Elige el usuario del chat con quien quieres compatir la url que acabas de visitar…</string>
+    <string name="escribe_un_mensaje">Escribe un mensaje</string>
+    <string name="escribiendo">Escribiendo…</string>
+    <string name="noexisteusuario">Este usuario no está dado de alta en la aplicación.</string>
+    <string name="mensaje_sin_notificacion">El mensaje ha sigo enviado pero no se le ha notificado el receptor…</string>
+    <string name="mensaje_borrado">Borrado por el Sistema…</string>
+    <string name="haz_click_en_la_imagen_para_modificarla">Haz click en la imagen para modificarla</string>
+    <string name="aviso_borrado_auto">AVISO: Acabas de enviar un mensaje que será borrado automáticamente por el Sistema!!!</string>
+    <string name="modificacion_perfil">Se han modificado correctamente los valores de tu perfil</string>
+    <string name="usuarioNoExiste">Este usuario no está dado de alta en la app. Chat...</string>
+
+
+    <string-array name="tiempo_borrado">
+        <item> "1 minuto" </item>
+        <item> "3 minutos" </item>
+        <item> "5 minutos" </item>
+        <item> "15 minutos" </item>
+        <item> "30 minutos" </item>
+        <item> "1 hora" </item>
+        <item> "2 horas" </item>
+    </string-array>
+
+
 </resources>

@@ -4,14 +4,18 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -37,37 +41,38 @@ import java.util.Calendar;
 import java.util.Date;
 
 import modelos.Chats;
+import modelos.Usuarios;
 import referencias.MisReferencias;
 
 import static com.example.antonio.chat.R.drawable.ic_person;
 import static referencias.MisReferencias.REFERENCIA_USUARIOS;
 
-/**
- * Created by Usuario on 09/02/2017.
- */
 
 public class AdaptadorChatsViewHolder_new extends FirebaseRecyclerAdapter<Chats, AdaptadorChatsViewHolder_new.ChatsViewHolder> {
 
     //CUANDO Activity_chats se abre a partir de una notificación USUARIO_CONECTADO es nulo
-    String emisor = MisReferencias.USUARIO_CONECTADO;
-    String imagenReceptor;
-    String receptor;
+    private String emisor = MisReferencias.USUARIO_CONECTADO;
+    private String imagenReceptor;
+    private String receptor;
     private String urlDescarga;
     private static final String IMAGE_DEFAULT = "default_image";
-    Context context;
+    private Context context;
+    private String email_preferences = "";
+    private Toolbar mToolbar, mToolbar2;
+    private int timeBorrado =0;
+    private int mitiempoConfiguradoEmisor=0;
+    private int mitiempoConfiguradoReceptor=0;
 
-    String nick="";
-    String email_preferences="";
-
-
-
-
-    public AdaptadorChatsViewHolder_new(int modelLayout, Query ref) {
+    public AdaptadorChatsViewHolder_new(int modelLayout, Query ref, Toolbar toolbar, Toolbar toolbar2,int tiempoConfiguradoEmisor, int tiempoConfiguradoReceptor) {
         super(Chats.class, modelLayout, ChatsViewHolder.class, ref);
+        mToolbar = toolbar;
+        mToolbar2 = toolbar2;
+        mitiempoConfiguradoEmisor=tiempoConfiguradoEmisor;
+        mitiempoConfiguradoReceptor=tiempoConfiguradoReceptor;
+    }
 
-
-
-
+    public AdaptadorChatsViewHolder_new(int fila_recyclerview_chat_new2, DatabaseReference databaseReference) {
+        super(Chats.class, fila_recyclerview_chat_new2, ChatsViewHolder.class, databaseReference);
     }
 
 
@@ -78,23 +83,16 @@ public class AdaptadorChatsViewHolder_new extends FirebaseRecyclerAdapter<Chats,
 
         //CUANDO Activity_chats se abre a partir de una notificación USUARIO_CONECTADO es nulo. Se traen los datos de las preferencias del usuario....
         SharedPreferences prefs = parent.getContext().getSharedPreferences("ficheroconfiguracion", Context.MODE_PRIVATE);
-       nick = prefs.getString("nick", "Usuario");//Valor por defecto 1000 que se aplica si no encuentra nada
+        //String nick = prefs.getString("nick", "Usuario");
         email_preferences = prefs.getString("email", "emailpordefecto@gmail.com");
-
-
         return new ChatsViewHolder(view);
-
     }
 
     private String dameFechaHoraActual() {
-
         long fechaHora = System.currentTimeMillis();
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         String fechahoraActual = sdf.format(fechaHora);
-
-
         return fechahoraActual;
-
     }
 
     private String diferenciaFechas(String inicio, String llegada) {
@@ -185,16 +183,14 @@ public class AdaptadorChatsViewHolder_new extends FirebaseRecyclerAdapter<Chats,
 
     }
 
-
     private void traerImagen(final ImageView imagen) {
-    //if (emisor.equals(receptor)) {CAMBIO 11 DE ABRIL
+        //if (emisor.equals(receptor)) {CAMBIO 11 DE ABRIL
         if (!email_preferences.equals(receptor)) {//Solo actualizamos imagen en los mensajes entrantes
             DatabaseReference database;
             DatabaseReference db;
             database = FirebaseDatabase.getInstance().getReference();
             db = database.getRoot().child(REFERENCIA_USUARIOS).child(imagenReceptor).child("image");
             //db.setValue(usuarios);
-
 
             db.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -215,18 +211,12 @@ public class AdaptadorChatsViewHolder_new extends FirebaseRecyclerAdapter<Chats,
                                 //Si hay transformación no se debe poner el placeholder pq lo carga antes de que se carga la imagen transformada...
                                 //.override(60,60)//Tamaño aplicado a la imagen. Tamaño en px. cuidado con los tamaños de las pantallas de los dispositivos.
                                 // .placeholder(ic_toolbar)//Imagen de sustitución mientras carga la imagen final. Contiene transición fade.
-
                                 .error(ic_person)//Imagen de sustitución si se ha producido error de carga
-
                                 //.centerCrop()//Escalado de imagen para llenar siempre los límites establecidos en diseño
                                 //.skipMemoryCache(true)//Omitiría la memoria caché. Por defecto está activada.
                                 //.diskCacheStrategy(DiskCacheStrategy.ALL)//Gestión de la caché de disco.
-
                                 // .transform(new util.CircleTransform(Activity_chats.this))
-
                                 .into(imagen);//dónde vamos a mostrar las imágenes
-
-
                     }
 
                 }//Fin if imagenReceptor
@@ -244,133 +234,173 @@ public class AdaptadorChatsViewHolder_new extends FirebaseRecyclerAdapter<Chats,
             if (db != null) {
                 db = null;
             }
-
         }
+    }
 
+    private int traeTimeBorrado(String usuario){
 
+        DatabaseReference database;
+        DatabaseReference db;
+        database = FirebaseDatabase.getInstance().getReference();
+        db = database.getRoot().child(REFERENCIA_USUARIOS).child(usuario);
+        db.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() == null) {
+                    Toast.makeText(context, "NO hay datos...", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Usuarios usuarios = dataSnapshot.getValue(Usuarios.class);
+                timeBorrado=usuarios.getTimeBorrado();
+                Toast.makeText(context, "Tiempo "+timeBorrado, Toast.LENGTH_SHORT).show();
+                //timeBorrado=dataSnapshot.child("timeBorrado").getValue(Integer.class);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("ERROR CARGANDO VALOR TIEMBORRADO", databaseError.getMessage());
+            }
+        });
+
+        return timeBorrado;
     }
 
     @Override
     protected void populateViewHolder(ChatsViewHolder viewHolder, Chats model, int position) {
 
-
-
-
-
-
-
-        //Context context;
         viewHolder.txtNombreviewHolder.setText(model.getEmisor());
-        viewHolder.txtMensajeviewHolder.setText(model.getMensaje());
         viewHolder.txtHoraviewHolder.setText(diferenciaFechas(model.getFecha(), dameFechaHoraActual()));
-
-        //No se muestra el receptor...
         context = viewHolder.cardViewViewHolder.getContext();
-        //LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) viewHolder.cardViewViewHolder.getLayoutParams();
+        //Resources res = context.getResources();//Ahora se utiliza ContextCompat.getColor(context,R.color.colorazul)
 
-        //PARA MOVER EL CARDVIEW DE UN LADO PARA OTRO DEPENDIENDO DE SI ES EMISOR O RECEPTOR
-        RelativeLayout.LayoutParams rl = (RelativeLayout.LayoutParams) viewHolder.cardViewViewHolder.getLayoutParams();//Layout padre del CardView
-        FrameLayout.LayoutParams layoutPadreLinearLayout = (FrameLayout.LayoutParams) viewHolder.mensajeBG.getLayoutParams();//Layout padre del LinearLayout
+        //Tratamiento del mensaje porque puede ser que tenga contenido html:
+        String mensaje = model.getMensaje();
+        //Mensaje con contenido html
+        if (mensaje.length() > 5) {
+            String mensaje_tratado = mensaje.substring(0, 4);
+            if (mensaje_tratado.equals("http")) {
 
+                //viewHolder.txtMensajeviewHolder.setText(Html.fromHtml("<a href=model.getMensaje>" + model.getMensaje()));
+                String proposicion = "Visita este enlace:";
+                viewHolder.txtMensajeviewHolder.setText(Html.fromHtml("<a href=" + model.getMensaje() + ">" + proposicion + "\n " + model.getMensaje()));
+                // viewHolder.txtMensajeviewHolder.setText(Html.fromHtml("<a href="+miurlCompartido+">" + proposicion + " " +miurlCompartido));
+                //Para poder hacer click si hay un link
+                viewHolder.txtMensajeviewHolder.setMovementMethod(LinkMovementMethod.getInstance());
 
-        /*RelativeLayout.LayoutParams llMensaje = (RelativeLayout.LayoutParams) viewHolder.txtMensajeviewHolder.getLayoutParams();
-        RelativeLayout.LayoutParams llHora = (RelativeLayout.LayoutParams) viewHolder.txtHoraviewHolder.getLayoutParams();*/
+            } else {
 
+                viewHolder.txtMensajeviewHolder.setText(model.getMensaje());
+            }
+        } else {
 
-        Resources res = context.getResources();
-
-        //String emisor=MisReferencias.USUARIO_CONECTADO;
-         receptor = model.getEmailEmisor();
-        imagenReceptor = model.getEmisor();
-
-        // traerImagen(viewHolder.imagen);
-
-        //SE TRATA DE UN MENSAJE ENVIADO:Compara los dos emails
-        //if (emisor.equals(receptor)) {CAMBIO 11 DE ABRIL
-        if (email_preferences.equals(receptor)) {
-            //viewHolder.mensajeBG.setBackgroundResource(R.drawable.in_message_bg);
-            rl.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            rl.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 0);
-            layoutPadreLinearLayout.gravity = Gravity.RIGHT;
-
-            //BIS:
-            //viewHolder.mensajeBG.setBackgroundColor(res.getColor(R.color.colorPrimaryDark));
-            viewHolder.mensajeBG.setBackgroundResource(R.drawable.blue_in_message_bg);//Cambiamos el fondo del bocadillo:Emisor
-
-
-            viewHolder.txtMensajeviewHolder.setTextColor(res.getColor(R.color.md_white_1000));
-
-            viewHolder.txtNombreviewHolder.setTextColor(res.getColor(R.color.md_white_1000_50));
-            viewHolder.txtHoraviewHolder.setTextColor(res.getColor(R.color.md_white_1000_50));
-
-            //BIS:
-            viewHolder.imagen.setImageResource(R.drawable.ic_toolbar);//Para que no se actualice con la imagen descargada al hacer scroll en el recyclerview
-            //viewHolder.imagen.setVisibility(View.GONE);
-
-
-            /*llMensaje.gravity = Gravity.RIGHT;
-            llHora.gravity = Gravity.RIGHT;*/
-           /* llMensaje.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            llMensaje.addRule(RelativeLayout.ALIGN_PARENT_LEFT,0);*/
-            /*llHora.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-            llHora.addRule(RelativeLayout.ALIGN_PARENT_LEFT,0);*/
-
-
-//            llHora.addRule(RelativeLayout.ALIGN_END,R.id.tv3);
-
-            //viewHolder.txtMensajeviewHolder.setGravity(Gravity.RIGHT);
-
-           /* viewHolder.imagen.setVisibility(View.GONE);
-            viewHolder.txtNombreviewHolder.setVisibility(View.INVISIBLE);*/
-
+            viewHolder.txtMensajeviewHolder.setText(model.getMensaje());
         }
 
-        //else if(!emisor.equals(receptor)){
+        //PARA MOVER EL CARDVIEW DE UN LADO PARA OTRO DEPENDIENDO DE SI ES EMISOR O RECEPTOR
+        // Para layout:fila_recyclerview_chat_new
+        /*RelativeLayout.LayoutParams rl = (RelativeLayout.LayoutParams) viewHolder.cardViewViewHolder.getLayoutParams();//Layout padre del CardView
+       FrameLayout.LayoutParams layoutPadreLinearLayout = (FrameLayout.LayoutParams) viewHolder.mensajeBG.getLayoutParams();//Layout padre del LinearLayout*/
 
-        else {//SE TRATA DE UN MENSAJE RECIBIDO
+        //Para layout:fila_recyclerview_chat_new2
+        RelativeLayout.LayoutParams rl = (RelativeLayout.LayoutParams) viewHolder.layoutPadre.getLayoutParams();
+        FrameLayout.LayoutParams layoutPadreLinearLayout = (FrameLayout.LayoutParams) viewHolder.mensajeBG.getLayoutParams();
 
+        receptor = model.getEmailEmisor();
+        imagenReceptor = model.getEmisor();
+
+
+//===========================================SE TRATA DE UN MENSAJE ENVIADO=============================================//
+
+        if (email_preferences.equals(receptor)) {//if (emisor.equals(receptor)) {CAMBIO 11 DE ABRIL
+            rl.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            rl.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 0);
+            layoutPadreLinearLayout.gravity = Gravity.END;
+            viewHolder.mensajeBG.setBackgroundResource(R.drawable.blue_in_message_bg);//Cambiamos el fondo del bocadillo:Emisor
+            //viewHolder.txtMensajeviewHolder.setTextColor(res.getColor(R.color.md_grey_500));//res.getColor is deprecated for Android 6
+            viewHolder.txtMensajeviewHolder.setTextColor(ContextCompat.getColor(context, R.color.md_white_1000));
+            viewHolder.txtNombreviewHolder.setTextColor(ContextCompat.getColor(context, R.color.md_white_1000_50));
+            viewHolder.txtHoraviewHolder.setTextColor(ContextCompat.getColor(context, R.color.md_white_1000_50));
+
+            //Si nos envían un link:
+            //viewHolder.txtMensajeviewHolder.setLinkTextColor(ContextCompat.getColor(context, R.color.md_text_white_87));
+            viewHolder.txtMensajeviewHolder.setLinkTextColor(ContextCompat.getColor(context, R.color.md_blue_400));
+            viewHolder.txtMensajeviewHolder.setTextSize(16);
+
+            viewHolder.imagen.setImageResource(R.drawable.ic_toolbar);//Para que no se actualice con la imagen descargada al hacer scroll en el recyclerview
+
+            //Para layout:fila_recyclerview_chat_new2
+            viewHolder.txtNombreviewHolder.setText("Tú");
+            viewHolder.imagen.setVisibility(View.GONE);
+
+            if (model.isParaBorrar()) {
+                long fecha_mensaje = model.getLongFecha();
+                long fecha_actual = System.currentTimeMillis();
+                //int tiempoConfiguradoEmisor= traeTimeBorrado(model.getEmisor());
+
+                if ((fecha_actual - fecha_mensaje) > mitiempoConfiguradoEmisor) {
+                    Log.i("CONFIGURACION BORRADO PARA EMISOR", String.valueOf(mitiempoConfiguradoEmisor));
+                    //Toast.makeText(context, "mitiempoConfiguradoEmisor "+mitiempoConfiguradoEmisor, Toast.LENGTH_SHORT).show();
+                    viewHolder.txtMensajeviewHolder.setText(R.string.mensaje_borrado);
+
+                    viewHolder.txtMensajeviewHolder.setTextColor(ContextCompat.getColor(context, R.color.color_text_mensaje_borrado));
+                }
+            }
+
+//==============================================SE TRATA DE UN MENSAJE RECIBIDO========================================//
+        } else {
             rl.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             rl.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);
-            layoutPadreLinearLayout.gravity = Gravity.LEFT;
+            layoutPadreLinearLayout.gravity = Gravity.START;
 
-            //BIS:
-            //viewHolder.mensajeBG.setBackgroundColor(res.getColor(R.color.md_white_1000));
             viewHolder.mensajeBG.setBackgroundResource(R.drawable.white_message_bg);//Cambiamos el fondo del bocadillo:Receptor
-
-            viewHolder.txtMensajeviewHolder.setTextColor(res.getColor(R.color.md_grey_500));
-            viewHolder.txtNombreviewHolder.setTextColor(res.getColor(R.color.colorAccent));
-            viewHolder.txtHoraviewHolder.setTextColor(res.getColor(R.color.colorAccent));
-
-
-           /* llMensaje.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-            llMensaje.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,0);
-            llHora.addRule(RelativeLayout.ALIGN_PARENT_LEFT);*/
-
-
-            /*viewHolder.txtMensajeviewHolder.setGravity(Gravity.LEFT);*/
+            viewHolder.txtMensajeviewHolder.setTextColor(ContextCompat.getColor(context, R.color.md_grey_600));//
+            viewHolder.txtNombreviewHolder.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+            viewHolder.txtHoraviewHolder.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+            //Si nos envían un link:
+            viewHolder.txtMensajeviewHolder.setLinkTextColor(ContextCompat.getColor(context, R.color.md_blue_600));
+            viewHolder.txtMensajeviewHolder.setTextSize(16);
 
             traerImagen(viewHolder.imagen);//Solo actualizamos la imagen del mensaje recibido
 
-           /* viewHolder.imagen.setVisibility(View.VISIBLE);
-            viewHolder.txtNombreviewHolder.setVisibility(View.VISIBLE);*/
+            //Para layout:fila_recyclerview_chat_new2
+            viewHolder.imagen.setVisibility(View.VISIBLE);
+            viewHolder.txtNombreviewHolder.setText(model.getEmisor());
+
+            if (model.isParaBorrar()) {
+                long fecha_mensaje = model.getLongFecha();
+                long fecha_actual = System.currentTimeMillis();
+
+                //int tiempoConfiguradoReceptor= traeTimeBorrado(model.getReceptor());
+
+                if ((fecha_actual - fecha_mensaje) > mitiempoConfiguradoReceptor) {
+
+                    //Toast.makeText(context, "mitiempoConfiguradoReceptor "+mitiempoConfiguradoReceptor, Toast.LENGTH_SHORT).show();
+                    Log.i("CONFIGURACION BORRADO PARA RECEPTOR", String.valueOf(mitiempoConfiguradoReceptor));
+                    viewHolder.txtMensajeviewHolder.setText(R.string.mensaje_borrado);
+                    viewHolder.txtMensajeviewHolder.setTextColor(ContextCompat.getColor(context, R.color.color_text_mensaje_borrado));
+                }
+            }
 
 
         }
 
         //Añadimos reglas para setLayoutParams
-        viewHolder.cardViewViewHolder.setLayoutParams(rl);
+        //viewHolder.cardViewViewHolder.setLayoutParams(rl);
+        viewHolder.layoutPadre.setLayoutParams(rl);
         viewHolder.mensajeBG.setLayoutParams(layoutPadreLinearLayout);
 
-       /* viewHolder.txtMensajeviewHolder.setLayoutParams(llMensaje);
-        viewHolder.txtHoraviewHolder.setLayoutParams(llHora);*/
 
         //Gestionamos la transparencia del cardView dependiendo de la API
-        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
             viewHolder.cardViewViewHolder.getBackground().setAlpha(0);
         else
             viewHolder.cardViewViewHolder.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent));
 
     }
+
+
 
 
     class ChatsViewHolder extends RecyclerView.ViewHolder
@@ -379,24 +409,23 @@ public class AdaptadorChatsViewHolder_new extends FirebaseRecyclerAdapter<Chats,
 
         TextView txtNombreviewHolder;
         TextView txtMensajeviewHolder;
-        //TextView txtFechaviewHolder;
         TextView txtHoraviewHolder;
-        //ImageView imagenviewHolder;
         CardView cardViewViewHolder;
         RelativeLayout mensajeBG;//Es el fondo de los bocadillos....
         ImageView imagen;
+        RelativeLayout layoutPadre;
 
-        public ChatsViewHolder(View itemView) {
+        ChatsViewHolder(View itemView) {
             super(itemView);
 
             this.txtNombreviewHolder = (TextView) itemView.findViewById(R.id.tv1);
             this.txtMensajeviewHolder = (TextView) itemView.findViewById(R.id.tv3);
-            //this.txtFechaviewHolder = (TextView) itemView.findViewById(R.id.tv2);
             this.txtHoraviewHolder = (TextView) itemView.findViewById(R.id.tvHora);
-            //this.imagenviewHolder = (ImageView) itemView.findViewById(R.id.category);
             this.cardViewViewHolder = (CardView) itemView.findViewById(R.id.cv);
             this.mensajeBG = (RelativeLayout) itemView.findViewById(R.id.mensajeBG);
             this.imagen = (ImageView) itemView.findViewById(R.id.category);
+
+            this.layoutPadre = (RelativeLayout) itemView.findViewById(R.id.layoutPadre);
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
@@ -405,38 +434,49 @@ public class AdaptadorChatsViewHolder_new extends FirebaseRecyclerAdapter<Chats,
 
         @Override
         public void onClick(View view) {
-            int position = getAdapterPosition();
-            Chats currentItem = (Chats) getItem(position);
 
+            //int position = getAdapterPosition();
+            //Chats currentItem = (Chats) getItem(position);
 
-            //DatabaseReference reference = getRef(position);
-            //String nick=currentItem.getNick();
-            //Query Id = db.orderByChild("_id").limitToLast(1);
-            //Query misChats = reference.getRoot().child("Chat").child("receptor").equalTo(nick);//No sube al root. Ver....
+            mToolbar.setVisibility(View.VISIBLE);
+            mToolbar2.setVisibility(View.GONE);
 
-/*
-            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();//BB.DD.
-            DatabaseReference misChats = firebaseDatabase.getReference(MisReferencias.REFERENCIA_CHATS);
-            Query query = misChats.child("receptor").equalTo(nick);*/
-
-            /*boolean completed = !currentItem.isCompleted();
-            currentItem.setCompleted(completed);
-            Map<String, Object> updates = new HashMap<String, Object>();
-            updates.put("completed", completed);
-            reference.updateChildren(updates);*/
         }
 
+
         @Override
-        public boolean onLongClick(View view) {
+        public boolean onLongClick(final View view) {
             int position = getAdapterPosition();
-            Chats currentItem = (Chats) getItem(position);
-            DatabaseReference reference = getRef(position);
+            final Chats currentItem = (Chats) getItem(position);
+            final DatabaseReference reference = getRef(position);
             //reference.removeValue();
 
-            if (emisor.equals(currentItem.getEmailEmisor())) {//Si el mensaje seleccionado es del usuario le deja borrarlo...
-                borrar(reference, view);
-            }
+            mToolbar.setVisibility(View.GONE);
+            mToolbar2.setVisibility(View.VISIBLE);
+            //miActivity.setActionBar(mToolbar2);
 
+
+            //mToolbar2.setSubtitle(estadoReceptor);
+            //mToolbar2.setTitleMarginStart(0);
+            //mToolbar2.setDisplayHomeAsUpEnabled(true);
+
+
+            mToolbar2.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+
+                    if (emisor.equals(currentItem.getEmailEmisor())) {//Si el mensaje seleccionado es del usuario le deja borrarlo...
+                        borrar(reference, view);
+                        // Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
+                    }
+                    mToolbar.setVisibility(View.VISIBLE);
+                    //mToolbar.setTitle(receptor);
+                    //mToolbar.setSubtitle(estadoReceptor);
+                    mToolbar2.setVisibility(View.GONE);
+
+                    return false;
+                }
+            });
 
             return true;
         }
@@ -446,10 +486,10 @@ public class AdaptadorChatsViewHolder_new extends FirebaseRecyclerAdapter<Chats,
 
             AlertDialog.Builder dialogEliminar = new AlertDialog.Builder(view.getContext());
 
-            //dialogEliminar.setIcon(android.R.drawable.ic_dialog_alert);
-            dialogEliminar.setIcon(R.drawable.imagen2);
-            dialogEliminar.setTitle("Eliminar mensaje");
-            dialogEliminar.setMessage("¿Deseas eliminar este mensaje del Chat?");
+
+            //dialogEliminar.setIcon(R.drawable.imagen2);
+            dialogEliminar.setTitle(R.string.eliminarmensaje);
+            dialogEliminar.setMessage(R.string.textoelimininarmensaje);
             dialogEliminar.setCancelable(false);
 
             dialogEliminar.setPositiveButton(
@@ -461,18 +501,26 @@ public class AdaptadorChatsViewHolder_new extends FirebaseRecyclerAdapter<Chats,
                             reference.removeValue();
 
                             Toast.makeText(view.getContext(),
-                                    "Mensaje eliminado",
+                                    R.string.confirmeliminarmensaje,
                                     Toast.LENGTH_SHORT).show();
 
 
                         }
                     });
 
-            dialogEliminar.setNegativeButton(android.R.string.no, null);
+             dialogEliminar.setNegativeButton(android.R.string.no,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mToolbar.setVisibility(View.VISIBLE);
+                            mToolbar2.setVisibility(View.GONE);
+
+                        }
+                    });
 
             dialogEliminar.show();
+
         }
     }
-
 
 }

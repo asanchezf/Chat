@@ -11,11 +11,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import modelos.Usuarios;
 
 
-/**
- * Created by ykro.
- */
 public class FirebaseHelper {
     //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
@@ -29,6 +27,7 @@ public class FirebaseHelper {
     private final static String CONTACTS_PATH = "contacts";
 
     final private static String REFERENCIA_CHATS = "Chat";
+    final private static String REFERENCIA_USUARIOS = "Usuarios";
 
     private static class SingletonHolder {
         private static final FirebaseHelper INSTANCE = new FirebaseHelper();
@@ -41,6 +40,38 @@ public class FirebaseHelper {
     private FirebaseHelper(){
         dataReference = FirebaseDatabase.getInstance().getReference();
         //dataReference=FirebaseDatabase.getInstance();
+    }
+
+    public int getDevuelveTiempoBorrado(String usuarioChat){
+        /*DatabaseReference database1;
+        DatabaseReference db;
+        database1 = FirebaseDatabase.getInstance().getReference();
+        db = database1.getRoot().child(REFERENCIA_USUARIOS).child(usuario);*/
+        final int[] tiempoConfiguradoReceptor = new int[1];
+        dataReference = FirebaseDatabase.getInstance().getReference().child(REFERENCIA_USUARIOS).child(usuarioChat);
+        dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() == null) {
+                   // Toast.makeText(Activity_chats.this, "NO hay datos...", Toast.LENGTH_SHORT).show();
+
+                }
+
+                Usuarios usuarios = dataSnapshot.getValue(Usuarios.class);
+                /*timeBorrado[0] =usuarios.getTimeBorrado();
+                tiempoConfiguradoReceptor= timeBorrado[0];*/
+                 tiempoConfiguradoReceptor[0] = usuarios.getTimeBorrado();
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+        return tiempoConfiguradoReceptor[0];
     }
 
     public DatabaseReference getDataReference() {
@@ -92,6 +123,21 @@ public class FirebaseHelper {
         }
         return dataReference.getRoot().child(REFERENCIA_CHATS).child(keyChat);
     }
+
+
+    public DatabaseReference getDatosReceptor(String receptor){
+
+        //String keyReceptor = receptor;
+
+        return dataReference.getRoot().child(REFERENCIA_USUARIOS).child(receptor);
+    }
+
+
+    public DatabaseReference getDatosEmisor(String emisor){
+
+       return dataReference.getRoot().child(REFERENCIA_USUARIOS).child(emisor);
+    }
+
 
     public void changeUserConnectionStatus(boolean online) {
         if (getMyUserReference() != null) {

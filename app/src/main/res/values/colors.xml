@@ -45,7 +45,9 @@
     <color name="list_pressed">#64b5f6</color>
 
     <color name="list_pressed_long">#2196f3</color>
-
+ <!--   <color name="color_text_mensaje_borrado">#142b3b</color>-->
+   <!-- <color name="color_text_mensaje_borrado">#1792a4</color>-->
+    <color name="color_text_mensaje_borrado">#f0ddaa</color>
     <array name="reds">
         <item>@color/md_red_500</item>
         <item>@color/md_red_50</item>
@@ -61,6 +63,7 @@
         <item>@color/md_red_A200</item>
         <item>@color/md_red_A400</item>
         <item>@color/md_red_A700</item>
+        <item>@color/md_red_mi_red</item>
     </array>
     <color name="md_red_50">#ffebee</color>
     <color name="md_red_100">#ffcdd2</color>
@@ -79,6 +82,7 @@
     <color name="md_red_500_25">#40f44336</color>
     <color name="md_red_500_50">#80f44336</color>
     <color name="md_red_500_75">#c0f44336</color>
+    <color name="md_red_mi_red">#e42d40</color>
     <!-- pinks -->
     <array name="pinks">
         <item>@color/md_pink_500</item>

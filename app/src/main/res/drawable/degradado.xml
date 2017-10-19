@@ -6,9 +6,9 @@
 
    <!-- <stroke android:background="@color/md_blue_grey_500"/>-->
     <gradient
-        android:startColor="@color/list_pressed"
-        android:endColor="@color/md_white_1000"
-        android:angle="180">
+        android:startColor="@color/colorPrimaryDark"
+        android:endColor="@color/colorPrimary"
+        android:angle="270">
         <!--angle debe ser múltiplo de 45-->
         <!--android:endColor="@color/md_blue_grey_100"-->
 

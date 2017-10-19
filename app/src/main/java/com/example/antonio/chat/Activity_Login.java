@@ -131,7 +131,6 @@ public class Activity_Login extends AppCompatActivity implements View.OnClickLis
                 nick = txtNick.getText().toString().trim();
                 tokenNotify=FirebaseInstanceId.getInstance().getToken();
 
-
                 if (!nickPreferences.equals("DefaultUser")) {
                     Toast.makeText(btnLogin.getContext(), "La aplicación solo puede ser utilizada con el usuario: " + nickPreferences, Toast.LENGTH_LONG).show();
                     hideProgress();
@@ -152,7 +151,8 @@ public class Activity_Login extends AppCompatActivity implements View.OnClickLis
                                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
                                 String Stringfechahora = sdf.format(fechaHora);
                                 //19 de abril:se introduce el campo ESCRIBE...
-                                Usuarios usuario = new Usuarios(nick.trim(), nick.trim(), Stringfechahora, email.trim(), true, tokenNotify,IMAGE_DEFAULT,CONQUIENCHATEA,ESCRIBE);
+                                //14 de Octubre se introduce el campo timeBorrado
+                                Usuarios usuario = new Usuarios(nick.trim(), nick.trim(), Stringfechahora, email.trim(), true, tokenNotify,IMAGE_DEFAULT,CONQUIENCHATEA,ESCRIBE,60000);
 
 
                                 generarPreferencias();

@@ -7,17 +7,24 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,12 +46,16 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.io.File;
 import java.io.IOException;
 
+import modelos.Usuarios;
 import referencias.MisReferencias;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+import util.ConfigurarBorradoMensajes;
 import util.Tratamiento_Imagenes;
 
+import static com.example.antonio.chat.R.id.lista;
 import static com.theartofdev.edmodo.cropper.CropImageView.CropShape.OVAL;
 import static referencias.MisReferencias.REFERENCIA_USUARIOS;
+import static util.ConfigurarBorradoMensajes.configurarCombo;
 
 /**
  * Created by Usuario on 21/03/2017.
@@ -53,7 +64,7 @@ import static referencias.MisReferencias.REFERENCIA_USUARIOS;
 public class Activity_ajustes extends AppCompatActivity {
 
     Toolbar toolbar;
-    //ImageButton imgFoto;
+    Spinner spinner_tiempo;
     ImageView imgFoto;
     TextView tvNombre, tvNick;
     Button btnSetup;
@@ -70,6 +81,8 @@ public class Activity_ajustes extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private String urlDescarga;
     private Bitmap mbitmap;
+   // private String tiempo;
+    private long timeBorrado=0;
 
 
     @Override
@@ -95,6 +108,25 @@ public class Activity_ajustes extends AppCompatActivity {
             }
         });
 
+
+        spinner_tiempo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //ConfigurarBorradoMensajes.tiempoConfigurado = (String) parent.getItemAtPosition(position);
+                 //Toast.makeText(Activity_ajustes.this, "El tiempo de borrado es: "+parent.getItemAtPosition(position), Toast.LENGTH_LONG).show();
+                //Log.i("TIEMPO",ConfigurarBorradoMensajes.tiempoConfigurado);
+                //timeBorrado=ConfigurarBorradoMensajes.configurarCombo(ConfigurarBorradoMensajes.tiempoConfigurado);
+                String devuelvePosicion = (String) parent.getItemAtPosition(position);
+                timeBorrado= configurarCombo(devuelvePosicion);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+/**/
     }
 
     @Override//Añadimos fuente
@@ -123,9 +155,50 @@ public class Activity_ajustes extends AppCompatActivity {
         tvNick = (TextView) findViewById(R.id.tvNick);
         tvNombre.setText(nick_propio);
         tvNick.setText(email_propio);
+        spinner_tiempo= (Spinner) findViewById(R.id.spinnertiempo);
+        //CREANDO EL ARRAY PARA EL ADAPTADOR DEL SPINNER DESDE LOS RECURSOS:
+        ArrayAdapter adaptadorMeses = ArrayAdapter.createFromResource(this, R.array.tiempo_borrado, R.layout.support_simple_spinner_dropdown_item);
+        spinner_tiempo.setAdapter(adaptadorMeses);
         mtorageReference = FirebaseStorage.getInstance().getReference();
 
         traerImagen();
+        traerValorSpinner();
+
+    }
+
+    private void traerValorSpinner() {
+        DatabaseReference database;
+        DatabaseReference db;
+        database = FirebaseDatabase.getInstance().getReference();
+        db = database.getRoot().child(REFERENCIA_USUARIOS).child(nick_propio);
+        //db.keepSynced(true);
+        db.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() == null) {
+                    Toast.makeText(Activity_ajustes.this, "NO hay datos...", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Usuarios usuarios = dataSnapshot.getValue(Usuarios.class);
+
+                int tiempoConfigurado=usuarios.getTimeBorrado();
+                int valorDevuelto=ConfigurarBorradoMensajes.configurarCombo(tiempoConfigurado);
+                spinner_tiempo.setSelection(valorDevuelto);
+                //Toast.makeText(Activity_ajustes.this, "valorDevuelto: "+valorDevuelto, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("ERROR CARGANDO VALOR TIEMBORRADO", databaseError.getMessage());
+            }
+        });
+
+        if (database != null) database = null;
+        if (db != null) db = null;
+
+
+
 
     }
 
@@ -302,14 +375,18 @@ public class Activity_ajustes extends AppCompatActivity {
 
     //3
     private void modificarCuentaUsuario() {
+        //Se navega hasta el usuario logado y se modificar su campo image
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference db = databaseReference.getRoot().child(REFERENCIA_USUARIOS).child(nick_propio);
 
-        //if (imageUri != null || mimageUri!= null) {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Actualizando tu pefil espera por favor...");
+        progressDialog.show();
+
         if (mbitmap != null) {
 
 
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setMessage("Actualizando tu pefil espera por favor...");
-            progressDialog.show();
+
             //Renombrando el archivo:
           /*  StorageReference mfilepath = mtorageReference.child("Images").child(nick_propio).child("avatar").child("avatar.jpeg");
             File file = null;
@@ -344,17 +421,21 @@ public class Activity_ajustes extends AppCompatActivity {
 
                     db.child("image").setValue(dowloadString);
 
+
                   /* Toast.makeText(Activity_ajustes.this, "Imagen subida al servidor",
                             Toast.LENGTH_LONG).show();*/
 
-                    progressDialog.dismiss();
 
-                    Intent modificarCuenta = new Intent(Activity_ajustes.this, Activity_usuarios.class);
+
+/*                    Intent modificarCuenta = new Intent(Activity_ajustes.this, Activity_usuarios.class);
                     modificarCuenta.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(modificarCuenta);
+                    startActivity(modificarCuenta);*/
 
-                }
-            })
+                }//Fin onSuccess
+
+            }//Fin  mfilepath.putFile
+
+            )
                     .addOnFailureListener(this, new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
@@ -391,7 +472,20 @@ public class Activity_ajustes extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
                     });*/
+        }else {//Modificamos otro campo
+            db.child("timeBorrado").setValue(timeBorrado);
         }
 
+        progressDialog.dismiss();
+
+        Toast.makeText(this, R.string.modificacion_perfil, Toast.LENGTH_SHORT).show();
+
+
+        Intent modificarCuenta = new Intent(Activity_ajustes.this, Activity_usuarios.class);
+        modificarCuenta.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(modificarCuenta);
+
+        if (databaseReference != null) databaseReference = null;
+        if (db != null) db = null;
     }
 }

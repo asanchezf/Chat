@@ -127,6 +127,7 @@ public class Tratamiento_Imagenes {
         onlyBoundsOptions.inPreferredConfig=Bitmap.Config.ARGB_8888;//optional
         BitmapFactory.decodeStream(input, null, onlyBoundsOptions);
 
+
         input.close();
 
         if ((onlyBoundsOptions.outWidth == -1) || (onlyBoundsOptions.outHeight == -1)) {

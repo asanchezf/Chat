@@ -27,8 +27,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imgToolbar"
-                android:layout_width="60dp"
-                android:layout_height="50dp"
+                android:layout_width="55dp"
+                android:layout_height="45dp"
                 android:layout_marginLeft="20dp"
                 android:src="@drawable/ic_toolbar"
                 android:visibility="visible"
@@ -36,7 +36,16 @@
 
         </android.support.v7.widget.Toolbar>
 
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbarChat2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:minHeight="?attr/actionBarSize"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            android:visibility="gone">
 
+        </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -51,35 +60,49 @@
 
         />
 
-
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        >
-
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp">
 
         <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/txtEscribir"
-            android:layout_alignParentLeft="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="40dp"
+
+            android:inputType="textMultiLine"
+            android:scrollbars="vertical"
+            android:layout_alignParentTop="true"
             android:layout_toLeftOf="@+id/btnEnviar"
             android:layout_toStartOf="@+id/btnEnviar"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-
-            />
+            android:background="@drawable/redondea_img"
+            android:hint="@string/escribe_un_mensaje"
+            android:paddingLeft="40dp"
+            android:paddingRight="20dp"/>
 
         <ImageButton
+            android:id="@+id/btnEnviar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btnEnviar"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-            android:layout_alignParentBottom="true"
+            android:layout_alignParentBottom="false"
             android:layout_alignParentRight="true"
-            android:tint="@android:color/black"
+
+            android:layout_margin="@dimen/activity_horizontal_margin"
             android:background="@android:color/transparent"
-            android:src="@android:drawable/ic_menu_send"/>
+            android:src="@drawable/enviar"/>
+
+        <ImageButton
+            android:id="@+id/btnAdjuntar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="false"
+            android:layout_alignParentLeft="true"
+
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:background="@android:color/transparent"
+            android:src="@drawable/adjuntar"/>
     </RelativeLayout>
 
 </LinearLayout>

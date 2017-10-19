@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="com.example.antonio.chat.Activity_ajustes"
       xmlns:yourapp="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/action_settings"
-          android:title="Mensaje con autodestrucción"
+
+    <item android:id="@+id/action_modificar_perfil"
+          android:title="Modificar perfil"
           android:visible="true"
-          android:icon="@drawable/enviar_borrar"
+          android:icon="@drawable/ic_delete_sweep_white_24dp"
           yourapp:showAsAction="always"
           android:orderInCategory="100" />
 </menu>

@@ -15,10 +15,18 @@ public class Usuarios {
     private String image;
     private String chateaCon;
     private boolean escribe;
+    private int timeBorrado;
 
     public final static boolean ONLINE = true;
     public final static boolean OFFLINE = false;
 
+    public int getTimeBorrado() {
+        return timeBorrado;
+    }
+
+    public void setTimeBorrado(int timeBorrado) {
+        this.timeBorrado = timeBorrado;
+    }
 
     public Usuarios() {
     }
@@ -36,8 +44,18 @@ public class Usuarios {
     }
 
 
-
-
+    public Usuarios(String nombre, String nick, String fecha, String email, boolean online, String tokenNotify, String image, String chateaCon, boolean escribe, int timeBorrado) {
+        this.nombre = nombre;
+        this.nick = nick;
+        this.fecha = fecha;
+        this.email = email;
+        this.online = online;
+        this.tokenNotify = tokenNotify;
+        this.image = image;
+        this.chateaCon = chateaCon;
+        this.escribe = escribe;
+        this.timeBorrado = timeBorrado;
+    }
 
     public boolean isEscribe() {
         return escribe;

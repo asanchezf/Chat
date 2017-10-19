@@ -2,10 +2,10 @@ package adaptadores;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,58 +24,61 @@ import modelos.Usuarios;
 import referencias.MisReferencias;
 
 
-/**
- * Created by Usuario on 09/02/2017.
- */
-
 public class AdaptadorUsuariosViewHolder extends FirebaseRecyclerAdapter<Usuarios, AdaptadorUsuariosViewHolder.UsuariosViewHolder> {
 
-    private boolean pintar = true;
-    //private static String  IMAGE_DEFAULT="default_image";
+    private static final String LOGTAG ="android-fcm"  ;
+    private  int miTiempoConfiguradoEmisor;
+    private String miurlCompartido = "";
 
 
-    public AdaptadorUsuariosViewHolder(int modelLayout, Query ref) {
+    public AdaptadorUsuariosViewHolder(int modelLayout, Query ref,int tiempoConfiguradoEmisor) {
         super(Usuarios.class, modelLayout, UsuariosViewHolder.class, ref);
+        miTiempoConfiguradoEmisor=tiempoConfiguradoEmisor;
+
+    }
+
+
+    //Constructor cuando nos traen una URL desde un navegador web como mensaje a enviar
+    public AdaptadorUsuariosViewHolder(int modelLayout, Query ref, String urlCompartido,int tiempoConfiguradoEmisor) {
+        super(Usuarios.class, modelLayout, UsuariosViewHolder.class, ref);
+         miurlCompartido = urlCompartido;
+        miTiempoConfiguradoEmisor=tiempoConfiguradoEmisor;
 
     }
 
     @Override
     public UsuariosViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-            ViewGroup view = (ViewGroup) LayoutInflater.from(parent.getContext()).inflate(mModelLayout, parent, false);
-
+        ViewGroup view = (ViewGroup) LayoutInflater.from(parent.getContext()).inflate(mModelLayout, parent, false);
         return new UsuariosViewHolder(view);
     }
 
     @Override
     protected void populateViewHolder(UsuariosViewHolder viewHolder, final Usuarios model, int position) {
-         String  IMAGE_DEFAULT="default_image";
-
+        String  IMAGE_DEFAULT="default_image";
         String emailUsuario = MisReferencias.USUARIO_CONECTADO;
         String emailColeccion = model.getEmail();
-        String nick=model.getNick();
-
-        ViewGroup view = (ViewGroup) viewHolder.itemView;
-        Resources res = view.getResources();
+        //String nick=model.getNick();
+        //ViewGroup view = (ViewGroup) viewHolder.itemView;
+        //Resources res = view.getResources();
 
         //Necesitamos Contexto para Glide
         Context context=viewHolder.imageAvatar.getContext();
 
-            //MUESTRA A TODOS LOS USUARIOS MENOS EL PROPIO. y que no sean nulos==ZUsuario Darío
-            if (!emailUsuario.equals(emailColeccion)&& nick !=null ) {
-                //viewHolder.txtNombreviewHolder.setText(String.format("Nick: %s", model.getNick()));
-                viewHolder.txtNombreviewHolder.setText(model.getNick());
-                //viewHolder.txtNickviewHolder.setText(String.format("Email: %s", model.getEmail()));
-                viewHolder.txtNickviewHolder.setText(String.format(model.getEmail()));
-                //viewHolder.txtFechaviewHolder.setText(String.format("Fecha de alta: %s", model.getFecha()));
-                viewHolder.txtFechaviewHolder.setText(String.format(model.getFecha()));
-                //viewHolder.imageAvatar.setImageURI(Uri.parse(model.getImage()));
+        //MUESTRA A TODOS LOS USUARIOS MENOS EL PROPIO. y que no sean nulos==ZUsuario Darío
+        if (!emailUsuario.equals(emailColeccion) ) {
+            //viewHolder.txtNombreviewHolder.setText(String.format("Nick: %s", model.getNick()));
+            viewHolder.txtNombreviewHolder.setText(model.getNick());
+            //viewHolder.txtNickviewHolder.setText(String.format("Email: %s", model.getEmail()));
+            viewHolder.txtNickviewHolder.setText(model.getEmail());
+            //viewHolder.txtFechaviewHolder.setText(String.format("Fecha de alta: %s", model.getFecha()));
+            viewHolder.txtFechaviewHolder.setText(model.getFecha());
+            //viewHolder.imageAvatar.setImageURI(Uri.parse(model.getImage()));
 
-                if(model.getImage().equals(IMAGE_DEFAULT)){
+            if(model.getImage().equals(IMAGE_DEFAULT)){
 
-                    viewHolder.imageAvatar.setImageResource(R.drawable.nuevo);
-                }
-                else{
+                viewHolder.imageAvatar.setImageResource(R.drawable.nuevo);
+            }
+            else{
                 //Informamos la imagen con Glide:
                 Glide.with(context)
                         //.load("http://petty.hol.es/CasaRozas/"+model.getItem(position).getImagen())//Desde dónde cargamos las imágenes
@@ -87,25 +90,25 @@ public class AdaptadorUsuariosViewHolder extends FirebaseRecyclerAdapter<Usuario
                         //.skipMemoryCache(true)//Omitiría la memoria caché. Por defecto está activada.
                         //.diskCacheStrategy(DiskCacheStrategy.ALL)//Gestión de la caché de disco.
                         .into(viewHolder.imageAvatar);//dónde vamos a mostrar las imágenes
-                }
+            }
 
 
-                boolean estado = model.isOnline();
-                if (estado) {
-                    viewHolder.txtEstadoviewHolder.setText(R.string.estado);
-                    viewHolder.txtEstadoviewHolder.setVisibility(View.VISIBLE);
-                }/*else if(!estado){
+            boolean estado = model.isOnline();
+            if (estado) {
+                viewHolder.txtEstadoviewHolder.setText(R.string.estado);
+                viewHolder.txtEstadoviewHolder.setVisibility(View.VISIBLE);
+            }/*else if(!estado){
                 viewHolder.txtEstadoviewHolder.setText("No conectado");
-                viewHolder.txtEstadoviewHolder.setTextColor(res.getColor(R.color.md_red_400));
+                viewHolder.txtEstadoviewHolder.setTextColor(ContextCompat.getColor(context,R.color.md_red_400));
                 viewHolder.txtEstadoviewHolder.setVisibility(View.VISIBLE);
             }*/
 
-            } else {
+        } else {
+           //NO SE MUESTRA LA INFORMACION DEL USUARIO CONECTADO
+            viewHolder.cardViewViewHolder.setVisibility(View.GONE);
+        }
 
-                pintar = false;
-                viewHolder.cardViewViewHolder.setVisibility(View.GONE);
 
-            }
 
         //final String post_key= String.valueOf(getRef(position));//Devuelve la ruta
         final String post_key= getRef(position).getKey();//Devuelve el nombre
@@ -115,11 +118,7 @@ public class AdaptadorUsuariosViewHolder extends FirebaseRecyclerAdapter<Usuario
                 //Toast.makeText(v.getContext(),"click en imagen " +post_key,Toast.LENGTH_SHORT).show();
 
 
-
-                //Toast.makeText(v.getContext(),"click en imagen " +post_key,Toast.LENGTH_SHORT).show();
-
                 openActivityPerfil(v,post_key);
-
 
             }
         });
@@ -148,60 +147,57 @@ public class AdaptadorUsuariosViewHolder extends FirebaseRecyclerAdapter<Usuario
         ImageView imageAvatar;
         CardView cardViewViewHolder;
 
-         UsuariosViewHolder(View itemView) {
+        UsuariosViewHolder(View itemView) {
             super(itemView);
 
 
-            if (pintar = true) {
+            //if (pintar = true) {
                 this.txtNombreviewHolder = (TextView) itemView.findViewById(R.id.text1);
                 this.txtNickviewHolder = (TextView) itemView.findViewById(R.id.text2);
                 this.txtFechaviewHolder = (TextView) itemView.findViewById(R.id.text3);
                 this.txtEstadoviewHolder = (TextView) itemView.findViewById(R.id.textEstado);
                 this.cardViewViewHolder = (CardView) itemView.findViewById(R.id.cvUsuarios);
                 this.imageAvatar = (ImageView) itemView.findViewById(R.id.imagenAvatar);
-                    /*this.cardViewViewHolder.setCardBackgroundColor(R.drawable.degradado);
-                    this.cardViewViewHolder.setBackgroundColor(R.drawable.degradado);
-                    this.cardViewViewHolder.setBackground(R.drawable.degradado);*/
-            }
+                   
+
+            //}//Fin if pintar
 
             itemView.setOnClickListener(this);
             //itemView.setOnLongClickListener(this);
 
         }
 
-        public void openActivity(View view, String receptor, String email,String tokenNotify) {
+        void openActivity(View view, String receptor, String email, String tokenNotify) {
 
             //ABRIMOS LA ACTIVITY NORMALMENTE
             Intent abrirChat = new Intent(view.getContext(), Activity_chats.class);
             //LO quitamos pq no queremos que se ejecute el on Destroy de ActivityUsuarios
-            abrirChat.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+
+       /*     abrirChat.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                     | Intent.FLAG_ACTIVITY_NEW_TASK
-                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);*/
 
             abrirChat.putExtra("parametro_receptor", receptor);
             abrirChat.putExtra("parametro_receptor_email", email);
             abrirChat.putExtra("parametro_receptor_token", tokenNotify);
+            abrirChat.putExtra("parametro_receptor_urlcompartido", miurlCompartido);
+            abrirChat.putExtra("parametro_emisor_tiempoBorrado", miTiempoConfiguradoEmisor);
+            Log.i(LOGTAG, "Paso AdaptadorUsuariosViewHolder emisor_tiempoBorrado"+miTiempoConfiguradoEmisor);
             view.getContext().startActivity(abrirChat);
 
 
     /*        Intent abrirChat = new Intent(view.getContext(), Activity_chats.class);
             String action = abrirChat.getAction();
             Uri data = abrirChat.getData();
-
-
             //VER::::::::
             //LO quitamos pq no queremos que se ejecute el on Destroy de ActivityUsuarios
             *//*abrirChat.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                     | Intent.FLAG_ACTIVITY_NEW_TASK
                     | Intent.FLAG_ACTIVITY_CLEAR_TASK);*//*
-
             abrirChat.putExtra("parametro_receptor", receptor);
             abrirChat.putExtra("parametro_receptor_email", email);
             abrirChat.putExtra("parametro_receptor_token", tokenNotify);
             view.getContext().startActivity(abrirChat);*/
-
-
-
 
 
             //ABRIMOS A RAIZ DE LA LLAMDA DESDE OTRA APP:
@@ -234,20 +230,6 @@ public class AdaptadorUsuariosViewHolder extends FirebaseRecyclerAdapter<Usuario
 
             openActivity(view, receptor, email,tokenNotify);
 
-
-            //Toast.makeText(this,"Sesión cerrada", Toast.LENGTH_SHORT).show();
-           /* Intent intent = new Intent(UsuariosViewHolder.this, Activity_chats.class);
-            startActivity(intent);*/
-
-
-
-
-
-            /*boolean completed = !currentItem.isCompleted();
-            currentItem.setCompleted(completed);
-            Map<String, Object> updates = new HashMap<String, Object>();
-            updates.put("completed", completed);
-            reference.updateChildren(updates);*/
         }
 
 
@@ -259,6 +241,4 @@ public class AdaptadorUsuariosViewHolder extends FirebaseRecyclerAdapter<Usuario
             return true;
         }
     }
-
-
 }
