@@ -28,13 +28,13 @@
         android:id="@+id/imgFoto"
         android:layout_width="175dp"
         android:layout_height="175dp"
-        android:layout_marginTop="17dp"
-
-        android:scaleType="centerCrop"
-
-        android:src="@drawable/ic_action"
         android:layout_below="@+id/appBarLayout"
-        android:layout_centerHorizontal="true"/>
+
+        android:layout_centerHorizontal="true"
+
+        android:layout_marginTop="19dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/img_cuenta"/>
 
 
     <TextView

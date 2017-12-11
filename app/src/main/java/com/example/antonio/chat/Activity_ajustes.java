@@ -7,19 +7,15 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -52,7 +48,6 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 import util.ConfigurarBorradoMensajes;
 import util.Tratamiento_Imagenes;
 
-import static com.example.antonio.chat.R.id.lista;
 import static com.theartofdev.edmodo.cropper.CropImageView.CropShape.OVAL;
 import static referencias.MisReferencias.REFERENCIA_USUARIOS;
 import static util.ConfigurarBorradoMensajes.configurarCombo;
@@ -261,7 +256,7 @@ public class Activity_ajustes extends AppCompatActivity {
                 //Usuarios  usuarios=dataSnapshot.getValue(Usuarios.class);
                 urlDescarga = dataSnapshot.getValue().toString();
 
-//Si el usuario no ha puesto imagen para el perfil saldría la imagen por defecto...
+                //Si el usuario no ha puesto imagen para el perfil saldría la imagen por defecto...
                 Glide.with(getApplicationContext())
                         //.load("http://petty.hol.es/CasaRozas/"+model.getItem(position).getImagen())//Desde dónde cargamos las imágenes
                         //.load(Uri.parse(usuarios.getImage()))
@@ -292,19 +287,6 @@ public class Activity_ajustes extends AppCompatActivity {
 
             db = null;
         }
-
-
-
-
-
-        // Download directly from StorageReference using Glide
-       /* Glide.with(this)
-                .using(new FirebaseImageLoader())
-                .load(mfilepath)
-                .centerCrop()
-                .crossFade()
-                .error(R.drawable.image5)
-                .into(imgFoto);*/
 
 
     }
@@ -385,8 +367,6 @@ public class Activity_ajustes extends AppCompatActivity {
 
         if (mbitmap != null) {
 
-
-
             //Renombrando el archivo:
           /*  StorageReference mfilepath = mtorageReference.child("Images").child(nick_propio).child("avatar").child("avatar.jpeg");
             File file = null;
@@ -402,11 +382,11 @@ public class Activity_ajustes extends AppCompatActivity {
             //1ª forma según el vídeo: Simple Blog App - Part 4
 
             //Redimensionamos el bitmap para que ocupe menos espacion antes de subirlo a Firebase
-            Bitmap bitmatReducido = Tratamiento_Imagenes.redimensionarImagenMaximo(mbitmap, 40, 40);
+            //Bitmap bitmatReducido = Tratamiento_Imagenes.redimensionarImagenMaximo(mbitmap, 40, 40);
 
 
-            final StorageReference mfilepath = mtorageReference.child("Images").child(nick_propio).child("avatar").child(bitmatReducido.toString());
-            //final StorageReference mfilepath = mtorageReference.child("Images").child(nick_propio).child("avatar").child(mimageUri.getLastPathSegment());
+
+            final StorageReference mfilepath = mtorageReference.child("Images").child(nick_propio).child("avatar").child("miAvatar.jpeg");//Siempre se llamará igual...
 
             mfilepath.putFile(mimageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override

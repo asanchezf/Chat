@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
         android:name=".MyAplication"
@@ -32,6 +34,18 @@
             android:resource="@color/md_purple_500"/>
         <!-- [END fcm_default_icon] -->
 
+       <!-- Desde Android 7 Si targetSdkVersion es 24 o superior, tenemos que usar la clase FileProvider para dar acceso al archivo o carpeta en particular
+            para hacerlos accesibles para otras aplicaciones-->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+
 
         <activity
             android:name=".Activity_chats"
@@ -42,7 +56,7 @@
             <intent-filter>
                 <action android:name="android.intent.accion.ABRIR_ACTIVITY_CHATS"/>
                 <category android:name="android.intent.category.DEFAULT"/>
-             </intent-filter>
+            </intent-filter>
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -54,13 +68,16 @@
             android:name=".Activity_usuarios"
             android:theme="@style/AppTheme.NoActionBar">
 
-            <!-- Para poder compartir desde un navegador web-->
+            <!-- Para poder compartir mágenes o paginas webs-->
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
+
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
+
                 <data android:mimeType="text/plain"/>
                 <data android:mimeType="text/html"/>
+                <data android:mimeType="image/*"/>
             </intent-filter>
 
         </activity>
@@ -93,12 +110,11 @@
             android:label="@string/app_name"
             android:parentActivityName=".Activity_usuarios"
             android:theme="@style/CustomPopUp"
-            android:windowSoftInputMode="stateHidden">
+            >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Activity_usuarios"/>
         </activity>
-
 
         <service android:name="servicios.FCMService">
             <intent-filter>
@@ -106,7 +122,8 @@
             </intent-filter>
         </service>
         <service android:name="servicios.FCMInstanceIdService">
-+            <intent-filter>
+            +
+            <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>

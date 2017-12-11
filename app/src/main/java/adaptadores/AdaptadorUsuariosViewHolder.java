@@ -26,24 +26,32 @@ import referencias.MisReferencias;
 
 public class AdaptadorUsuariosViewHolder extends FirebaseRecyclerAdapter<Usuarios, AdaptadorUsuariosViewHolder.UsuariosViewHolder> {
 
-    private static final String LOGTAG ="android-fcm"  ;
-    private  int miTiempoConfiguradoEmisor;
+    private static final String LOGTAG = "android-fcm";
+    private int miTiempoConfiguradoEmisor;
     private String miurlCompartido = "";
+    private Uri miImageUri = null;
 
 
-    public AdaptadorUsuariosViewHolder(int modelLayout, Query ref,int tiempoConfiguradoEmisor) {
+    public AdaptadorUsuariosViewHolder(int modelLayout, Query ref, int tiempoConfiguradoEmisor) {
         super(Usuarios.class, modelLayout, UsuariosViewHolder.class, ref);
-        miTiempoConfiguradoEmisor=tiempoConfiguradoEmisor;
+        miTiempoConfiguradoEmisor = tiempoConfiguradoEmisor;
 
     }
 
 
     //Constructor cuando nos traen una URL desde un navegador web como mensaje a enviar
-    public AdaptadorUsuariosViewHolder(int modelLayout, Query ref, String urlCompartido,int tiempoConfiguradoEmisor) {
+    public AdaptadorUsuariosViewHolder(int modelLayout, Query ref, String urlCompartido, int tiempoConfiguradoEmisor) {
         super(Usuarios.class, modelLayout, UsuariosViewHolder.class, ref);
-         miurlCompartido = urlCompartido;
-        miTiempoConfiguradoEmisor=tiempoConfiguradoEmisor;
+        miurlCompartido = urlCompartido;
+        miTiempoConfiguradoEmisor = tiempoConfiguradoEmisor;
 
+    }
+
+    //Constructor cuando nos traen una imagen desde la Galería
+    public AdaptadorUsuariosViewHolder(int modelLayout, Query ref, Uri imageUri, int tiempoConfiguradoEmisor) {
+        super(Usuarios.class, modelLayout, UsuariosViewHolder.class, ref);
+        miTiempoConfiguradoEmisor = tiempoConfiguradoEmisor;
+        miImageUri = imageUri;
     }
 
     @Override
@@ -54,34 +62,26 @@ public class AdaptadorUsuariosViewHolder extends FirebaseRecyclerAdapter<Usuario
 
     @Override
     protected void populateViewHolder(UsuariosViewHolder viewHolder, final Usuarios model, int position) {
-        String  IMAGE_DEFAULT="default_image";
+        String IMAGE_DEFAULT = "default_image";
         String emailUsuario = MisReferencias.USUARIO_CONECTADO;
         String emailColeccion = model.getEmail();
-        //String nick=model.getNick();
-        //ViewGroup view = (ViewGroup) viewHolder.itemView;
-        //Resources res = view.getResources();
 
         //Necesitamos Contexto para Glide
-        Context context=viewHolder.imageAvatar.getContext();
+        Context context = viewHolder.imageAvatar.getContext();
 
-        //MUESTRA A TODOS LOS USUARIOS MENOS EL PROPIO. y que no sean nulos==ZUsuario Darío
-        if (!emailUsuario.equals(emailColeccion) ) {
-            //viewHolder.txtNombreviewHolder.setText(String.format("Nick: %s", model.getNick()));
+        //MUESTRA A TODOS LOS USUARIOS MENOS EL PROPIO.
+        if (!emailUsuario.equals(emailColeccion)) {
+            viewHolder.cardViewViewHolder.setVisibility(View.VISIBLE);
             viewHolder.txtNombreviewHolder.setText(model.getNick());
-            //viewHolder.txtNickviewHolder.setText(String.format("Email: %s", model.getEmail()));
             viewHolder.txtNickviewHolder.setText(model.getEmail());
-            //viewHolder.txtFechaviewHolder.setText(String.format("Fecha de alta: %s", model.getFecha()));
             viewHolder.txtFechaviewHolder.setText(model.getFecha());
-            //viewHolder.imageAvatar.setImageURI(Uri.parse(model.getImage()));
 
-            if(model.getImage().equals(IMAGE_DEFAULT)){
-
+            //Traemos las imágenes del perfil de cada uno de los usuarios.
+            if (model.getImage().equals(IMAGE_DEFAULT)) {
                 viewHolder.imageAvatar.setImageResource(R.drawable.nuevo);
-            }
-            else{
+            } else {
                 //Informamos la imagen con Glide:
                 Glide.with(context)
-                        //.load("http://petty.hol.es/CasaRozas/"+model.getItem(position).getImagen())//Desde dónde cargamos las imágenes
                         .load(Uri.parse(model.getImage()))
                         //.placeholder(R.drawable.image_susti)//Imagen de sustitución mientras carga la imagen final. Contiene transición fade.
                         .error(R.drawable.image5)//Imagen de sustitución si se ha producido error de carga
@@ -92,33 +92,34 @@ public class AdaptadorUsuariosViewHolder extends FirebaseRecyclerAdapter<Usuario
                         .into(viewHolder.imageAvatar);//dónde vamos a mostrar las imágenes
             }
 
-
+            //Actualizacmos el estado de cada uno de los usuarios...
             boolean estado = model.isOnline();
             if (estado) {
                 viewHolder.txtEstadoviewHolder.setText(R.string.estado);
                 viewHolder.txtEstadoviewHolder.setVisibility(View.VISIBLE);
-            }/*else if(!estado){
-                viewHolder.txtEstadoviewHolder.setText("No conectado");
-                viewHolder.txtEstadoviewHolder.setTextColor(ContextCompat.getColor(context,R.color.md_red_400));
-                viewHolder.txtEstadoviewHolder.setVisibility(View.VISIBLE);
-            }*/
+              } else {
+                viewHolder.txtEstadoviewHolder.setVisibility(View.INVISIBLE);
+            }
 
-        } else {
-           //NO SE MUESTRA LA INFORMACION DEL USUARIO CONECTADO
+        }
+
+        //CUANDO ES EL USUARIO CONECTADO NO SE MUESTRA.
+        else if (emailUsuario.equals(emailColeccion)){
+            //NO SE MUESTRA LA INFORMACION DEL USUARIO CONECTADO
             viewHolder.cardViewViewHolder.setVisibility(View.GONE);
         }
 
 
 
+        //EVENTO PARA MOSTRAR LA IMAGEN DE PERFIL EN OTRA ACTIVITY
         //final String post_key= String.valueOf(getRef(position));//Devuelve la ruta
-        final String post_key= getRef(position).getKey();//Devuelve el nombre
+        final String post_key = getRef(position).getKey();//Devuelve el nombre
         viewHolder.imageAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Toast.makeText(v.getContext(),"click en imagen " +post_key,Toast.LENGTH_SHORT).show();
 
-
-                openActivityPerfil(v,post_key);
+                openActivityPerfil(v, post_key);
 
             }
         });
@@ -136,9 +137,8 @@ public class AdaptadorUsuariosViewHolder extends FirebaseRecyclerAdapter<Usuario
 
 
     class UsuariosViewHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener,
-            View.OnLongClickListener {
-
+            implements View.OnClickListener {
+        //View.OnLongClickListener {//13 DE NOVIEMBRE SE DESECHA EL ONCLIK
 
         TextView txtNombreviewHolder;
         TextView txtNickviewHolder;
@@ -151,38 +151,40 @@ public class AdaptadorUsuariosViewHolder extends FirebaseRecyclerAdapter<Usuario
             super(itemView);
 
 
-            //if (pintar = true) {
-                this.txtNombreviewHolder = (TextView) itemView.findViewById(R.id.text1);
-                this.txtNickviewHolder = (TextView) itemView.findViewById(R.id.text2);
-                this.txtFechaviewHolder = (TextView) itemView.findViewById(R.id.text3);
-                this.txtEstadoviewHolder = (TextView) itemView.findViewById(R.id.textEstado);
-                this.cardViewViewHolder = (CardView) itemView.findViewById(R.id.cvUsuarios);
-                this.imageAvatar = (ImageView) itemView.findViewById(R.id.imagenAvatar);
-                   
+            this.txtNombreviewHolder = (TextView) itemView.findViewById(R.id.text1);
+            this.txtNickviewHolder = (TextView) itemView.findViewById(R.id.text2);
+            this.txtFechaviewHolder = (TextView) itemView.findViewById(R.id.text3);
+            this.txtEstadoviewHolder = (TextView) itemView.findViewById(R.id.textEstado);
+            this.cardViewViewHolder = (CardView) itemView.findViewById(R.id.cvUsuarios);
+            this.imageAvatar = (ImageView) itemView.findViewById(R.id.imagenAvatar);
 
-            //}//Fin if pintar
 
             itemView.setOnClickListener(this);
             //itemView.setOnLongClickListener(this);
 
         }
 
-        void openActivity(View view, String receptor, String email, String tokenNotify) {
+        void openActivity(View view, String receptor, String email, String tokenNotify, String imagenToolbarReceptor) {
 
             //ABRIMOS LA ACTIVITY NORMALMENTE
             Intent abrirChat = new Intent(view.getContext(), Activity_chats.class);
             //LO quitamos pq no queremos que se ejecute el on Destroy de ActivityUsuarios
-
-       /*     abrirChat.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+           /* abrirChat.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                     | Intent.FLAG_ACTIVITY_NEW_TASK
                     | Intent.FLAG_ACTIVITY_CLEAR_TASK);*/
-
             abrirChat.putExtra("parametro_receptor", receptor);
             abrirChat.putExtra("parametro_receptor_email", email);
             abrirChat.putExtra("parametro_receptor_token", tokenNotify);
             abrirChat.putExtra("parametro_receptor_urlcompartido", miurlCompartido);
             abrirChat.putExtra("parametro_emisor_tiempoBorrado", miTiempoConfiguradoEmisor);
-            Log.i(LOGTAG, "Paso AdaptadorUsuariosViewHolder emisor_tiempoBorrado"+miTiempoConfiguradoEmisor);
+            abrirChat.putExtra("parametro_receptor_imagen", miImageUri);
+            abrirChat.putExtra("parametro_receptor_avatar", imagenToolbarReceptor);
+           /* abrirChat.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                       | Intent.FLAG_ACTIVITY_CLEAR_TASK);*/
+
+
+            Log.i(LOGTAG, "Paso AdaptadorUsuariosViewHolder emisor_tiempoBorrado" + miTiempoConfiguradoEmisor);
+            Log.i(LOGTAG, "Paso AdaptadorUsuariosViewHolder " + miImageUri);//LO trae
             view.getContext().startActivity(abrirChat);
 
 
@@ -199,15 +201,6 @@ public class AdaptadorUsuariosViewHolder extends FirebaseRecyclerAdapter<Usuario
             abrirChat.putExtra("parametro_receptor_token", tokenNotify);
             view.getContext().startActivity(abrirChat);*/
 
-
-            //ABRIMOS A RAIZ DE LA LLAMDA DESDE OTRA APP:
-           /* String actionName= "recibir.action.chat.usuarios";
-            Intent intent = new Intent(actionName);
-            intent.putExtra("parametro_receptor", receptor);
-            intent.putExtra("parametro_receptor_email", email);
-            intent.putExtra("parametro_receptor_text", text);
-            view.getContext().startActivity(intent);*/
-
         }
 
 
@@ -218,27 +211,21 @@ public class AdaptadorUsuariosViewHolder extends FirebaseRecyclerAdapter<Usuario
             DatabaseReference reference = getRef(position);
             String receptor = currentItem.getNick();
             String email = currentItem.getEmail();
-            String tokenNotify=currentItem.getTokenNotify();
-            //Query Id = db.orderByChild("_id").limitToLast(1);
-            //Query misChats = reference.getRoot().child("Chat").child("receptor").equalTo(nick);//No sube al root. Ver....
+            String tokenNotify = currentItem.getTokenNotify();
+            String imagenToolbarReceptor = currentItem.getImage();
 
 
-            /*FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();//BB.DD.
-            DatabaseReference misChats = firebaseDatabase.getReference(MisReferencias.REFERENCIA_CHATS);
-            Query query = misChats.child("receptor").equalTo(receptor);*/
-
-
-            openActivity(view, receptor, email,tokenNotify);
+            openActivity(view, receptor, email, tokenNotify, imagenToolbarReceptor);
 
         }
 
 
-        @Override
+      /*  @Override
         public boolean onLongClick(View view) {
             int position = getAdapterPosition();
             DatabaseReference reference = getRef(position);
             reference.removeValue();
             return true;
-        }
+        }*/
     }
 }

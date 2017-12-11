@@ -18,6 +18,7 @@ public class FirebaseHelper {
     //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
     private DatabaseReference dataReference;
+    private static FirebaseDatabase mData;
 
 //private FirebaseDatabase dataReference;
 
@@ -38,8 +39,20 @@ public class FirebaseHelper {
     }
 
     private FirebaseHelper(){
-        dataReference = FirebaseDatabase.getInstance().getReference();
-        //dataReference=FirebaseDatabase.getInstance();
+
+        dataReference = FirebaseDatabase.getInstance().getReference();//Correcto ANTES
+        //dataReference=FirebaseHelper.getDatabasePersistence().getReference();//Ver. Utilizando la persistencia
+   }
+    public  static FirebaseDatabase getDatabasePersistence(){
+
+
+        if (mData == null) {
+
+            mData = FirebaseDatabase.getInstance();
+            mData.setPersistenceEnabled(true);
+        }
+        return mData;
+
     }
 
     public int getDevuelveTiempoBorrado(String usuarioChat){

@@ -103,6 +103,17 @@
             android:layout_margin="@dimen/activity_horizontal_margin"
             android:background="@android:color/transparent"
             android:src="@drawable/adjuntar"/>
+
+        <ImageButton
+            android:id="@+id/btnhacerfoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_alignTop="@+id/btnEnviar"
+            android:layout_toLeftOf="@+id/btnEnviar"
+            android:layout_toStartOf="@+id/btnEnviar"
+            android:background="@android:color/transparent"
+            android:src="@drawable/camera"/>
     </RelativeLayout>
 
 </LinearLayout>

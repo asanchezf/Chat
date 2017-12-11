@@ -11,6 +11,8 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 
+import referencias.FirebaseHelper;
+
 public class Inicio extends AppCompatActivity {
 //implements GoogleApiClient.OnConnectionFailedListener
     private static final String TAG = "Inicio";
@@ -33,6 +35,8 @@ public class Inicio extends AppCompatActivity {
         btnSignIn.setColorScheme(SignInButton.COLOR_DARK);
         btnLoginInicio = (Button) findViewById(R.id.btnLoginInicio);
 
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        FirebaseHelper.getDatabasePersistence();
         mAuth = FirebaseAuth.getInstance();
 
 

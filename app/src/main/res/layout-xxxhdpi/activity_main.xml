@@ -6,7 +6,7 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/md_grey_300"
+    android:background="@color/md_grey_200"
     android:orientation="vertical"
 
     tools:context="com.example.antonio.chat.Activity_chats">
@@ -28,15 +28,21 @@
             app:subtitleTextAppearance="@style/ToolbarSubtitleAppearance"
 
             >
-
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="115dp">
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imgToolbar"
-                android:layout_width="50dp"
-                android:layout_height="40dp"
-                android:layout_marginLeft="130dp"
+                android:layout_width="45dp"
+                android:layout_height="35dp"
+
+
                 android:src="@drawable/ic_toolbar"
                 android:visibility="visible"
                 />
+        </LinearLayout>
 
         </android.support.v7.widget.Toolbar>
 
@@ -54,10 +60,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-
-
-
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/lista"
         android:layout_width="match_parent"
@@ -73,6 +75,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="5dp">
+
+
 
         <EditText
             android:id="@+id/txtEscribir"
@@ -100,7 +104,6 @@
             android:layout_margin="@dimen/activity_horizontal_margin"
             android:background="@android:color/transparent"
             android:src="@drawable/enviar"/>
-
         <ImageButton
             android:id="@+id/btnAdjuntar"
             android:layout_width="wrap_content"
@@ -122,6 +125,7 @@
             android:layout_toStartOf="@+id/btnEnviar"
             android:background="@android:color/transparent"
             android:src="@drawable/camera"/>
+
     </RelativeLayout>
 
 </LinearLayout>

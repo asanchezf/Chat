@@ -64,6 +64,13 @@ public class Activity_Login extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+
+
+        //HABILITAMOS LA PERSISTENCIA EN LA APP
+        //FirebaseHelper.getDatabasePersistence();
+        //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
         inicializarComponentes();
         damePreferencias();
 

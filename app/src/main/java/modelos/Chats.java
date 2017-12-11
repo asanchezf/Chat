@@ -2,7 +2,9 @@ package modelos;
 
 import com.google.firebase.database.Exclude;
 
-public class Chats {
+import java.io.Serializable;
+
+public class Chats implements Serializable{
     private String emisor;
     private String fecha;
     private String mensaje;
@@ -13,9 +15,52 @@ public class Chats {
     private long longFecha;
     @Exclude
     private boolean paraBorrar;
+    private String imagen;
+    private String rutaImagen;
+
+
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
+    }
 
     public Chats() {
     }
+
+    public String getRutaImagen() {
+        return rutaImagen;
+    }
+
+    public void setRutaImagen(String rutaImagen) {
+        this.rutaImagen = rutaImagen;
+    }
+
+    public Chats(String emisor, String fecha, String mensaje, String receptor, String emailEmisor, long longFecha, boolean paraBorrar, String imagen, String rutaImagen) {
+        this.emisor = emisor;
+        this.fecha = fecha;
+        this.mensaje = mensaje;
+        this.receptor = receptor;
+        this.emailEmisor = emailEmisor;
+        this.longFecha = longFecha;
+        this.paraBorrar = paraBorrar;
+        this.imagen = imagen;
+        this.rutaImagen = rutaImagen;
+    }
+
+    public Chats(String emisor, String fecha, String mensaje, String receptor, String emailEmisor, long longFecha, boolean paraBorrar, String imagen) {
+        this.emisor = emisor;
+        this.fecha = fecha;
+        this.mensaje = mensaje;
+        this.receptor = receptor;
+        this.emailEmisor = emailEmisor;
+        this.longFecha = longFecha;
+        this.paraBorrar = paraBorrar;
+        this.imagen = imagen;
+    }
+
     //SE UTILIZA CUANDO SE VA A CREAR UN MENSAJE PARA QUE SEA BORRADO AUTOMÁTICAMENTE POR EL SISTEMA
     public Chats(String emisor, String fecha, String mensaje, String receptor, String emailEmisor, long longFecha, boolean paraBorrar) {
         this.emisor = emisor;
