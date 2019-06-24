@@ -46,8 +46,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginRight="5dp"
-                android:src="@drawable/nuevo"/>
+                android:src="@drawable/nuevo"
+                android:layout_marginRight="10dp"/>
 
 
             <TextView

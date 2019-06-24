@@ -258,6 +258,8 @@ public class AdaptadorChatsViewHolder_new extends FirebaseRecyclerAdapter<Chats,
 
         //MENSAJE CON IMAGEN
         if (!model.getImagen().equals("SIN IMAGEN")) {
+            viewHolder.textoImagen.setText(model.getEmisor());
+            viewHolder.fechaImagen.setText(diferenciaFechas(model.getFecha(), dameFechaHoraActual()));
 
             if (model.getRutaImagen() != null) {
                 miImagen = new File(model.getRutaImagen());//Si está en el HDD: /storage/emulated/0/Chat/Fotos/nombreimagen.jpg
@@ -267,9 +269,9 @@ public class AdaptadorChatsViewHolder_new extends FirebaseRecyclerAdapter<Chats,
                 miImagen = new File(model.getImagen());//NO está descargada, se descargará cuando haga click en la imagen desde la uri guardada en Firebase
             }*/
 
-            if (miImagen.exists()) {//Traemos desde la uri del HDD
+            if (miImagen.exists()) {//Traemos desde la uri del HDD. Porque previamente ya la hemos visto al abrirse la Galería o simplemente porque es una imagen nuestra...
                 glideTraeImagenDiscoDuro(viewHolder);
-            } else if (!miImagen.exists()) {//Descargamos desde la url de Firebase y difuminamos
+            } else if (!miImagen.exists()) {//Descargamos desde la url de Firebase y difuminamos. Al hacer click y verla se abrirá en la Galería y se grabará en HDD.
                 glideTraeImagenFirebase(viewHolder, model);
 
             }
@@ -324,6 +326,8 @@ public class AdaptadorChatsViewHolder_new extends FirebaseRecyclerAdapter<Chats,
             if (!model.getImagen().equals("SIN IMAGEN")) {
               /*  viewHolder.imagenAdjuntada.setBackgroundColor(ContextCompat.getColor(context, R.color.md_light_blue_900));
                 viewHolder.imagenAdjuntada.setPadding(4 , 4, 4, 4);*/
+
+                viewHolder.textoImagen.setText("Tú");
 
                 conImagenEnviado(viewHolder, position);
             } else {
@@ -496,6 +500,8 @@ public class AdaptadorChatsViewHolder_new extends FirebaseRecyclerAdapter<Chats,
         holder.txtHoraviewHolder.setVisibility(View.VISIBLE);
         holder.imagenAdjuntada.setVisibility(View.GONE);
         holder.contenedor_imgAdjuntada.setVisibility(View.GONE);
+        holder.textoImagen.setVisibility(View.GONE);
+        holder.fechaImagen.setVisibility(View.GONE);
     }
 
     private void conImagenEnviado(ChatsViewHolder viewHolder, int position) {
@@ -509,6 +515,8 @@ public class AdaptadorChatsViewHolder_new extends FirebaseRecyclerAdapter<Chats,
         viewHolder.imagen.setVisibility(View.GONE);
         viewHolder.imagenAdjuntada.setVisibility(View.VISIBLE);
         viewHolder.contenedor_imgAdjuntada.setVisibility(View.VISIBLE);
+        viewHolder.textoImagen.setVisibility(View.VISIBLE);
+        viewHolder.fechaImagen.setVisibility(View.VISIBLE);
         viewHolder.imagenAdjuntada.setScaleType(ImageView.ScaleType.CENTER_CROP);
         viewHolder.imagenAdjuntada.setAlpha(1F);
 
@@ -527,6 +535,9 @@ public class AdaptadorChatsViewHolder_new extends FirebaseRecyclerAdapter<Chats,
         holder.imagen.setVisibility(View.VISIBLE);
         holder.imagenAdjuntada.setVisibility(View.VISIBLE);
         holder.contenedor_imgAdjuntada.setVisibility(View.VISIBLE);
+        holder.textoImagen.setVisibility(View.VISIBLE);
+        holder.fechaImagen.setVisibility(View.VISIBLE);
+
         traerImagenToolbar(holder.imagen);
 
         //SI LA IMAGEN LA TENEMOS EN EL HDD DEL DISPOSITIVO LA TRAEMOS
@@ -554,6 +565,8 @@ public class AdaptadorChatsViewHolder_new extends FirebaseRecyclerAdapter<Chats,
         RelativeLayout layoutPadre;
         ImageView imagenAdjuntada;
         RelativeLayout contenedor_imgAdjuntada;
+        TextView textoImagen;
+        TextView fechaImagen;
 
         ChatsViewHolder(View itemView) {
             super(itemView);
@@ -567,6 +580,8 @@ public class AdaptadorChatsViewHolder_new extends FirebaseRecyclerAdapter<Chats,
             this.imagenAdjuntada = (ImageView) itemView.findViewById(R.id.imgAdjuntada);
             this.layoutPadre = (RelativeLayout) itemView.findViewById(R.id.layoutPadre);
             this.contenedor_imgAdjuntada=(RelativeLayout) itemView.findViewById(R.id.contenedor_imgAdjuntada);
+            this.textoImagen=(TextView)itemView.findViewById(R.id.textoImagen) ;
+            this.fechaImagen=(TextView)itemView.findViewById(R.id.fechaImagen) ;
 
             itemView.setOnClickListener(this);
             //itemView.setOnLongClickListener(this);

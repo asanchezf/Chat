@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@android:color/white"
@@ -22,12 +20,11 @@
             android:layout_margin="5dp"
             android:src="@drawable/image1"/>
 
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Rellena los campos para entrar"
+            android:text="@string/rellena_los_campos_para_entrar"
             android:textAlignment="center"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold|italic"
@@ -43,7 +40,7 @@
         android:id="@+id/divid"
         android:layout_width="340dp"
         android:layout_height="2dp"
-        android:layout_below="@+id/layoutHorizontal"
+
 
         android:layout_gravity="center"
         android:layout_marginBottom="15dp"
@@ -59,12 +56,11 @@
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
         android:contextClickable="false"
-        android:hint="Introduce un email"
+        android:hint="@string/introduce_un_email_720"
         android:inputType="textEmailAddress"
         android:textAlignment="center"
         android:textColorHint="#c0607d8b"
-        android:textStyle="bold|italic"
-        />
+        android:textStyle="bold|italic"/>
 
 
     <EditText
@@ -74,19 +70,18 @@
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
         android:ems="10"
-        android:hint="Introduce una password"
+        android:hint="@string/introduce_una_password"
         android:inputType="textPassword"
         android:textAlignment="center"
 
         android:textColorHint="#c0607d8b"
-        android:textStyle="bold|italic"
-        />
+        android:textStyle="bold|italic"/>
 
     <View
         android:id="@+id/divider"
         android:layout_width="340dp"
         android:layout_height="2dp"
-        android:layout_below="@+id/txtPassword"
+
         android:layout_gravity="center"
         android:layout_marginBottom="15dp"
         android:layout_marginTop="5dp"
@@ -96,7 +91,7 @@
         android:id="@+id/layoutHorizontal2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal">
 
         <ImageView
@@ -110,10 +105,10 @@
             android:layout_height="wrap_content"
 
             android:layout_gravity="center"
-            android:text="Al registrarte debes introducir un alias de tu usuario"
+            android:text="@string/al_registrarte_debes_introducir_un_alias_de_tu_usuario"
 
             android:textAlignment="center"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="13sp"
             android:textStyle="italic"
 
             />
@@ -129,7 +124,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
         android:ems="10"
-        android:hint="Introduce un nick"
+        android:hint="@string/introduce_un_nick"
         android:inputType="text"
         android:textAlignment="center"
 
@@ -141,11 +136,16 @@
 
         android:layout_width="340dp"
         android:layout_height="2dp"
-        android:layout_below="@+id/txtNick"
+
         android:layout_gravity="center"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         android:background="@color/colorPrimary"/>
+
+
+
+
+
 
 
     <Button
@@ -153,10 +153,10 @@
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:background="@color/colorPrimaryDark"
 
-        android:text="Login"
+        android:text="@string/login"
         android:textColor="#ffffff"
         android:typeface="sans"
         />
@@ -165,7 +165,7 @@
         android:id="@+id/divider3"
         android:layout_width="140dp"
         android:layout_height="2dp"
-        android:layout_below="@+id/btnRegistrar"
+
         android:layout_gravity="center"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
@@ -178,13 +178,14 @@
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-
         android:background="@color/colorAccent"
 
-        android:text="Registro"
+        android:text="@string/registro"
         android:textColor="#ffffff"
         android:typeface="sans"
         />
+
+
 
     <ProgressBar
         style="?android:attr/textAppearanceSmall"
@@ -198,11 +199,11 @@
         android:id="@+id/recordar_check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/btnLogin"
+
         android:layout_marginTop="10dp"
         android:checked="true"
 
-        android:text="Recordarme"
+        android:text="@string/recordarme"
 
         android:textAppearance="?android:attr/textAppearanceSmall"
         />
@@ -212,19 +213,11 @@
         android:id="@+id/olvidar_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/btnLogin"
-        android:layout_alignRight="@+id/btnLogin"
-        android:layout_below="@+id/recordar_check"
+
 
         android:layout_gravity="right"
-        android:text="¿Olvidaste tu Contraseña?"
+        android:text="@string/olvidaste_tu_contrase_a"
         android:textAppearance="?android:attr/textAppearanceSmall"
-
-
         />
 
-
-
-
-
-</LinearLayout>
+    </LinearLayout>

@@ -44,13 +44,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
@@ -69,9 +66,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.greysonparrelli.permiso.Permiso;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -531,6 +525,7 @@ private void gestionaCambiaEscribeUsuario() {
         setTitle(receptor);
         toolbar.setSubtitle(estadoReceptor);
         toolbar.setTitleMarginStart(6);
+        //toolbar.setBackground(ContextCompat.getDrawable(this,R.drawable.degradado));
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //SEGUNDA TOOLBAR PARA QUE APAREZCA EL ICONO DE BORRAR MENSAJE AL HACER LONGCLICK
@@ -595,7 +590,6 @@ private void gestionaCambiaEscribeUsuario() {
 
 
         if (miurlCompartido != null && !miurlCompartido.equals("")) {
-
             avisoCompartirUrl();
         }
 
@@ -944,7 +938,7 @@ private void gestionaCambiaEscribeUsuario() {
                     .load(Uri.parse(urlImagenAvatarReceptor))
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     //Si hay transformación no se debe poner el placeholder pq lo carga antes de que se carga la imagen transformada...
-                    //.override(60,60)//Tamaño aplicado a la imagen. Tamaño en px. cuidado con los tamaños de las pantallas de los dispositivos.
+                    //.override(20,20)//Tamaño aplicado a la imagen. Tamaño en px. cuidado con los tamaños de las pantallas de los dispositivos.
                     // .placeholder(ic_toolbar)//Imagen de sustitución mientras carga la imagen final. Contiene transición fade.
                     .error(R.drawable.nuevo)//Imagen de sustitución si se ha producido error de carga
                     //.centerCrop()//Escalado de imagen para llenar siempre los límites establecidos en diseño
@@ -974,7 +968,7 @@ private void gestionaCambiaEscribeUsuario() {
                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
 
                                 //Si hay transformación no se debe poner el placeholder pq lo carga antes de que se carga la imagen transformada...
-                                //.override(60,60)//Tamaño aplicado a la imagen. Tamaño en px. cuidado con los tamaños de las pantallas de los dispositivos.
+                                //.override(4,4)//Tamaño aplicado a la imagen. Tamaño en px. cuidado con los tamaños de las pantallas de los dispositivos.
                                 // .placeholder(ic_toolbar)//Imagen de sustitución mientras carga la imagen final. Contiene transición fade.
                                 .error(R.drawable.nuevo)//Imagen de sustitución si se ha producido error de carga
                                 //.centerCrop()//Escalado de imagen para llenar siempre los límites establecidos en diseño
@@ -1169,12 +1163,6 @@ private void gestionaCambiaEscribeUsuario() {
 
             case R.id.btnAdjuntar:
                 traerImagen();
-                //GESTIONAMOS LOS PERMISOS CON LA LIBRERÍA PERMISOS....
-                //Versión anterior a M. NO hacen falta los permisos en tiempo de ejecución
-               /* if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M) {
-                    Permiso.getInstance().setActivity(this);
-                    solicitarPermisos();
-                }*/
                 break;
             case R.id.btnhacerfoto:
                 hacerFotografia();
@@ -1304,7 +1292,7 @@ private void gestionaCambiaEscribeUsuario() {
      /*       fileImagen = FileUtil.from(this, data.getData());
             fileImagen=data.getData();*/
 
-            comprimirImagen();//Tenemos compressedImage
+            comprimirImagen();//Tenemos fileImagen y devuelve compressedImage
             avisoSubirImagen();
 
 
@@ -1504,7 +1492,6 @@ private void gestionaCambiaEscribeUsuario() {
         mAdapter.notifyDataSetChanged();
         lista.scrollToPosition(mAdapter.getItemCount() - 1);
         //6 de noviembre: se pone para que se recarge el adaptador al descargar las imágenes y verlas en la galería
-
         Permiso.getInstance().setActivity(this);
 
         Log.i("Activity_Chats", "onResume Activity_Chats");
@@ -1588,129 +1575,6 @@ private void gestionaCambiaEscribeUsuario() {
             finish();*/
             }
         }, 8000);//splash de 8 segundos.
-
-
-    }
-
-    private void sendHostPushToken() {
-
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, MisReferencias.PUSH_URL_POST, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Log.e("!_@@_SUCESS", response + "");
-                Toast.makeText(Activity_chats.this, "Se ha enviado notificación desde el servidor php", Toast.LENGTH_LONG).show();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("!_@@_Errors--", error + "");
-                Toast.makeText(Activity_chats.this, "ERROR ENVIADO NOTIFICACIÓN DESDE PHP", Toast.LENGTH_LONG).show();
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put(TOKEN, tokenReceptor);
-                return params;
-            }
-        };
-
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        int socketTimeout = 1000 * 60;// 60 seconds
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        jsObjRequest.setRetryPolicy(policy);
-        requestQueue.add(jsObjRequest);
-
-
-    }
-
-    private void sendHostPush() {
-
-/*        String Legacy_SERVER_KEY = MisReferencias.SERVER_KEY;
-        String msg = "this is test message,.,,.,.";
-        String title = "my title";*/
-
-        //String token =  tokenEnviandoMensajr;
-   /*     String token ="eUIaMQ1zq6s:APA91bGmDhKdhrAFEi58DjOpgm--ioHJgJ-0iE1zao-JRe4ioI5-4RAL_7SIxtZACYL1TuiZk2u6Eo9nu2RUT-k-98y7oSbq00rG903oLW1UlW_4RRUXdOMHVSiVy6ldT9nlmGYqeR-8";
-        JSONObject obj = null;
-
-        JSONObject objData = null;
-        try {
-            obj = new JSONObject();
-            objData = new JSONObject();
-            objData.put("body", msg);
-            objData.put("title", title);
-            obj.put("to", token);
-            obj.put("notification", objData);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
-
-
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, MisReferencias.PUSH_URL, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Log.e("!_@@_SUCESS", response + "");
-                Toast.makeText(Activity_chats.this, "Se ha enviado notificación desde el servidor php", Toast.LENGTH_LONG).show();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("!_@@_Errors--", error + "");
-                Toast.makeText(Activity_chats.this, "ERROR ENVIADO NOTIFICACIÓN DESDE PHP", Toast.LENGTH_LONG).show();
-            }
-        });
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        int socketTimeout = 1000 * 60;// 60 seconds
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        jsObjRequest.setRetryPolicy(policy);
-        requestQueue.add(jsObjRequest);
-
-
-    }
-
-    private void sendFCMPush() {//NO FUNCIONA
-        String Legacy_SERVER_KEY = MisReferencias.SERVER_KEY;
-        String msg = "this is test message,.,,.,.";
-        String title = "my title";
-
-        //String token =  tokenEnviandoMensajr;
-        String token = "dDEDmJPZzxo:APA91bHxsrcCQdQ0OkOjD64Dp97EiqYP-KqWGA4Xj85_pBJU--piz6g5o3RZtqn2mHX9eALjbusOWNgn-r7qjOC56K_QfOrZ0M6ptlYtNr6xZcEHfl-zzeJYqyVikl20h3Y4gWG8RA5U";
-        JSONObject obj = null;
-
-        JSONObject objData = null;
-        try {
-            obj = new JSONObject();
-            objData = new JSONObject();
-            objData.put("body", msg);
-            objData.put("title", title);
-            obj.put("to", token);
-            obj.put("notification", objData);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, MisReferencias.FCM_PUSH_URL, obj, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                Log.e("!_@@_SUCESS", response + "");
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("!_@@_Errors--", error + "");
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Authorization", "key=" + MisReferencias.SERVER_KEY);
-                params.put("Content-Type", "application/json");
-                return params;
-            }
-        };
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        int socketTimeout = 1000 * 60;// 60 seconds RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT); jsObjRequest.setRetryPolicy(policy); requestQueue.add(jsObjRequest);
 
 
     }

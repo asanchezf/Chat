@@ -26,6 +26,22 @@
     <string name="aviso_borrado_auto">AVISO: Acabas de enviar un mensaje que será borrado automáticamente por el Sistema!!!</string>
     <string name="modificacion_perfil">Se han modificado correctamente los valores de tu perfil</string>
     <string name="usuarioNoExiste">Este usuario no está dado de alta en la app. Chat...</string>
+    <string name="crearUsuario">Se ha creado el usuario correctamente</string>
+    <string name="errorCreandoUsuario">Se ha producido el siguiente error:</string>
+    <string name="avisoCreandoUsuario">Para registrarte como usuario debes rellenar los campos email, password y nick</string>
+    <string name="usuarioNoPermisos">El usuario no tiene permisos para entrar en la aplicación.</string>
+    <string name="inicioSesion">Se ha iniciado correctamente la sesión</string>
+    <string name="errorIniciandoSesion">INFORMACIÓN PARA EL USUARIO:</string>
+    <string name="avisoIniciandoSesion">Debes rellenar los campos email y password</string>
+    <string name="rellena_los_campos_para_entrar">Rellena los campos para entrar</string>
+    <string name="introduce_un_email_720">Introduce un email-720</string>
+    <string name="introduce_una_password">Introduce una password</string>
+    <string name="al_registrarte_debes_introducir_un_alias_de_tu_usuario">Al registrarte debes introducir un alias de tu usuario</string>
+    <string name="introduce_un_nick">Introduce un nick</string>
+    <string name="login">Login</string>
+    <string name="registro">Registro</string>
+    <string name="recordarme">Recordarme</string>
+    <string name="olvidaste_tu_contrase_a">¿Olvidaste tu Contraseña?</string>
 
 
     <string-array name="tiempo_borrado">

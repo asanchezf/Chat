@@ -3,6 +3,8 @@ package com.example.antonio.chat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -100,41 +102,64 @@ public class Activity_usuarios extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usuarios);
-        setTitle("Lista de usuarios");
-
-        damePreferencias();
-        refUsuarios = firebaseDatabase.getReference(REFERENCIA_USUARIOS);//Trae todos por orden alfabético por defecto
-        //refUsuarios = firebaseDatabase.setPersistenceEnabled(true);
+        setTitle(R.string.app_name);
 
 
-        //traEstadoTodos();Está en pruebas..
+            damePreferencias();
+            refUsuarios = firebaseDatabase.getReference(REFERENCIA_USUARIOS);//Trae todos por orden alfabético por defecto
+            //refUsuarios = firebaseDatabase.setPersistenceEnabled(true);
 
 
+            //traEstadoTodos();Está en pruebas..
 
-        // Get intent, action and MIME type
-        Intent intent = getIntent();
-        String action = intent.getAction();
-        String type = intent.getType();
 
-        //RECIBE IMAGEN
-        if (Intent.ACTION_SEND.equals(action) && type != null) {
-            if (type.startsWith("image/")) {
-                //imageUri=intent.getData();
-                imageUri = (Uri) intent
-                        .getParcelableExtra(Intent.EXTRA_STREAM);
+            // Get intent, action and MIME type
+            Intent intent = getIntent();
+            String action = intent.getAction();
+            String type = intent.getType();
 
-                //Toast.makeText(Activity_usuarios.this, "imageUri " + imageUri, Toast.LENGTH_LONG).show(); // Handle single image being sent
+            //RECIBE IMAGEN
+            if (Intent.ACTION_SEND.equals(action) && type != null) {
+                if (type.startsWith("image/")) {
+                    //imageUri=intent.getData();
+                    imageUri = (Uri) intent
+                            .getParcelableExtra(Intent.EXTRA_STREAM);
 
+                    //Toast.makeText(Activity_usuarios.this, "imageUri " + imageUri, Toast.LENGTH_LONG).show(); // Handle single image being sent
+
+                }
+                if (type.startsWith("text/html")) {//RECIBE HTML
+                    urlCompartido = intent.getStringExtra(Intent.EXTRA_TEXT);
+                }
+                if (type.startsWith("text/plain")) {//RECIBE TEXTO PLANO
+                    urlCompartido = intent.getStringExtra(Intent.EXTRA_TEXT);
+                }
             }
-            if (type.startsWith("text/html")) {//RECIBE HTML
-                urlCompartido = intent.getStringExtra(Intent.EXTRA_TEXT);
-            }
-            if (type.startsWith("text/plain")) {//RECIBE TEXTO PLANO
-                urlCompartido = intent.getStringExtra(Intent.EXTRA_TEXT);
-            }
+
+            inicializarComponentes();
+
+
+
+    }
+
+    private void comprobarConexion() {
+
+        ConnectivityManager manager=(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo network=manager.getActiveNetworkInfo();
+        //if( !( (network==null && !network.isConnected()))){
+            if(network!=null && network.isConnected()){
+            //traerDatos();
+            Toast.makeText(this, "En estos momentos no tienes conexión. Inténtalo más tarde", Toast.LENGTH_SHORT).show();
+            return;
+
+        }/*else{
+
+            *//*imgNoInternet.setVisibility(View.VISIBLE);
+            txtNoInternet.setVisibility(View.VISIBLE);
+            lista.setVisibility(View.INVISIBLE);*//*
         }
+*/
 
-        inicializarComponentes();
     }
 
     private void traEstadoTodos() {
@@ -187,6 +212,7 @@ public class Activity_usuarios extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setSubtitle(email_propio);
+        //toolbar.setBackground(ContextCompat.getDrawable(this,R.drawable.degradado));
 
         /*SI LA LLAMADA SE HACE DESDE ACTIVITYMAIN INICIALIZAMOS ESTE ADAPTADOR PARA EL RECYCLERVIEW*/
 
@@ -248,7 +274,7 @@ public class Activity_usuarios extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() == null) {
-                    Toast.makeText(Activity_usuarios.this, "NO hay datos...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Activity_usuarios.this, "No hay datos...", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -295,6 +321,7 @@ public class Activity_usuarios extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             group.setBackground(ContextCompat.getDrawable(this, R.drawable.degradado));
+
         } else {
             group.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         }
@@ -347,6 +374,20 @@ public class Activity_usuarios extends AppCompatActivity {
     private void cerrarSesion() {
 
         FirebaseAuth.getInstance().signOut();
+
+
+     /*   mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+        mGoogleSignInClient.signOut()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        // ...
+                    }
+                });*/
+
+
+
         Intent intent = new Intent(this, Activity_Login.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                 | Intent.FLAG_ACTIVITY_NEW_TASK

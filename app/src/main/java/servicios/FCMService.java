@@ -59,7 +59,7 @@ public class FCMService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         //RECOGEMOS LOS DATOS DEL SERVICIO EnviarNotificacionesDesdePHP.php
 
-        //Si el servicio utiliza el objeto 'notification' => array....Ahora el servicio no los tiene.
+        //Si el servicio utiliza en cuerpo del envío el objeto 'notification' => array....Ahora el servicio no los tiene.
         if (remoteMessage.getNotification() != null) {
 
             //TRATAMIENTO DEL MENSAJE SI ES DEL TIPO NOTIFICACIÓN
@@ -81,7 +81,7 @@ public class FCMService extends FirebaseMessagingService {
 
 
 
-        //TRATAMIENTO DEL MENSAJE SI CONTIENE DATOS Y NO CONTIENE NOTIFICACIONES:
+        //TRATAMIENTO DEL MENSAJE SI EL SERVICIO UTILIZA "data" EN EL CUERPO DEL ENVÍO PARA QUE PUEDA TENER MÁS PARÁMETROS:
         if (remoteMessage.getData().size() > 0) {
             //Log.d(TAG, "Message data payload: " + remoteMessage.getData());
             //imageUri will contain URL of the image to be displayed with Notification

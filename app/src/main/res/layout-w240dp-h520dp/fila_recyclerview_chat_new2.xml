@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<div>Icons made by <a href="https://www.flaticon.com/authors/dinosoftlabs" title="DinosoftLabs">DinosoftLabs</a>
-    from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
-    is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0"
-                      target="_blank">CC 3.0 BY</a></div>-->
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -15,7 +12,7 @@
         android:id="@+id/layoutPadre"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
+        android:layout_marginLeft="3dp"
         android:padding="0dp"
 
         >
@@ -25,16 +22,15 @@
             android:id="@+id/category"
             android:layout_width="40dp"
             android:layout_height="35dp"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_alignParentBottom="true"
             android:src="@drawable/ic_toolbar"
-
             />
 
         <android.support.v7.widget.CardView
             android:id="@+id/cv"
-            android:layout_width="250dp"
+            android:layout_width="240dp"
             android:layout_height="wrap_content"
 
             android:layout_alignTop="@+id/category"
@@ -52,27 +48,31 @@
                 android:layout_height="wrap_content"
 
                 android:layout_margin="0dp"
-                android:padding="0dp"
-
                 android:layout_toRightOf="@+id/category"
-                android:background="@drawable/blue_in_message_bg">
+
+                android:background="@drawable/blue_in_message_bg"
+                android:padding="0dp">
 
 
                 <TextView
+
                     android:id="@+id/tv1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="0dp"
+
+                    android:layout_alignBaseline="@+id/tvHora"
+                    android:layout_alignBottom="@+id/tvHora"
+
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_margin="0dp"
                     android:maxLines="1"
+                    android:padding="0dp"
                     android:text="Nombre"
                     android:textAppearance="@android:style/TextAppearance.Holo.Large"
                     android:textColor="@color/colorAccent"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_alignBaseline="@+id/tvHora"
-                    android:layout_alignBottom="@+id/tvHora"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"/>
+                    android:textStyle="bold"/>
 
 
                 <TextView
@@ -80,27 +80,35 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/tv1"
+
                     android:layout_marginTop="2dp"
-                    android:padding="0dp"
                     android:clickable="false"
+
+
                     android:contextClickable="false"
                     android:linksClickable="false"
+                    android:padding="0dp"
                     android:text="Mensaje"
                     android:textColor="@color/md_grey_400"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     />
 
                 <TextView
                     android:id="@+id/tvHora"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+
+                    android:layout_alignParentTop="true"
+
+                    android:layout_margin="0dp"
                     android:padding="0dp"
                     android:text="Hora"
                     android:textColor="@color/colorAccent"
-                    android:textSize="12sp"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"/>
+                    android:textSize="12sp"/>
+
 
             </RelativeLayout>
 
@@ -114,29 +122,58 @@
             android:layout_toEndOf="@+id/category"
             android:layout_toRightOf="@+id/category"
             android:layout_below="@+id/cv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="240dp"
+            android:layout_height="170dp"
             android:layout_marginTop="4dp"
-
             android:padding="0dp"
-            >
+            android:background="@drawable/bg_shadow">
+
 
             <ImageView
 
                 android:id="@+id/imgAdjuntada"
-                android:layout_width="280dp"
-                android:layout_height="200dp"
+                android:layout_width="240dp"
+                android:layout_height="170dp"
 
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:scaleType="center"
                 android:visibility="visible"/>
+
+            <TextView
+                android:id="@+id/textoImagen"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_gravity="start"
+                android:background="@color/background_footer"
+                android:maxLines="1"
+                android:paddingLeft="8dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/fechaImagen"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:maxLines="1"
+                android:paddingRight="5dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"
+                android:gravity="end"/>
+
+
+
         </RelativeLayout>
 
     </RelativeLayout>
 
+    </RelativeLayout>
 
 
-
-</RelativeLayout>

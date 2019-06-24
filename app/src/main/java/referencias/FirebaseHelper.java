@@ -41,6 +41,7 @@ public class FirebaseHelper {
     private FirebaseHelper(){
 
         dataReference = FirebaseDatabase.getInstance().getReference();//Correcto ANTES
+
         //dataReference=FirebaseHelper.getDatabasePersistence().getReference();//Ver. Utilizando la persistencia
    }
     public  static FirebaseDatabase getDatabasePersistence(){

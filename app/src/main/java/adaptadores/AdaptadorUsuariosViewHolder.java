@@ -85,7 +85,7 @@ public class AdaptadorUsuariosViewHolder extends FirebaseRecyclerAdapter<Usuario
                         .load(Uri.parse(model.getImage()))
                         //.placeholder(R.drawable.image_susti)//Imagen de sustitución mientras carga la imagen final. Contiene transición fade.
                         .error(R.drawable.image5)//Imagen de sustitución si se ha producido error de carga
-                        //.override(600,400)//Tamaño aplicado a la imagen. Tamaño en px. cuidado con los tamaños de las pantallas de los dispositivos.
+                        .override(81,81)//Tamaño aplicado a la imagen. Tamaño en px. cuidado con los tamaños de las pantallas de los dispositivos.
                         .centerCrop()//Escalado de imagen para llenar siempre los límites establecidos en diseño
                         //.skipMemoryCache(true)//Omitiría la memoria caché. Por defecto está activada.
                         //.diskCacheStrategy(DiskCacheStrategy.ALL)//Gestión de la caché de disco.

@@ -40,18 +40,18 @@ public class Activity_Login extends AppCompatActivity implements View.OnClickLis
     private EditText txtEmail, txtPass, txtNick;
     private Button btnLogin, btnRegistrar;
     private ProgressBar progressBar;
-    String email;
-    String pass;
-    String nick;
-    String nickPreferences;
-    String emailPreferences;
-    String passPreferences;
+    private String email;
+    private String pass;
+    private String nick;
+    private String nickPreferences;
+    private String emailPreferences;
+    private String passPreferences;
 
     //Listener para saber si hemos iniciado sesión
-    FirebaseAuth.AuthStateListener miListenrSesion;
-    FirebaseUser user;
+    private FirebaseAuth.AuthStateListener miListenrSesion;
+    private FirebaseUser user;
 
-    DatabaseReference dbRef;
+    private DatabaseReference dbRef;
     //Para las notificaciones desde Servidor
     private String tokenNotify;
     private static String  IMAGE_DEFAULT="default_image";
@@ -65,48 +65,51 @@ public class Activity_Login extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_login);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-
-
         //HABILITAMOS LA PERSISTENCIA EN LA APP
         //FirebaseHelper.getDatabasePersistence();
         //FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
-        inicializarComponentes();
-        damePreferencias();
 
 
+            inicializarComponentes();
+            damePreferencias();
 
-        //Se ejecuta cuando cambiamos de sesion. Al iniciar o al finalizar
-        miListenrSesion = new FirebaseAuth.AuthStateListener() {
+            //Se ejecuta cuando cambiamos de sesion. Al iniciar o al finalizar
+            miListenrSesion = new FirebaseAuth.AuthStateListener() {
 
-          @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                @Override
+                public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
-                //FirebaseUser user = firebaseAuth.getCurrentUser();
-                user = firebaseAuth.getCurrentUser();
+                    //FirebaseUser user = firebaseAuth.getCurrentUser();
+                    user = firebaseAuth.getCurrentUser();
 
-                if (user != null) {
-                    //Tenemos sesión
-                    Log.i("SESIOM", "Sesión iniciada con el usuario " + user.getEmail());
+                    if (user != null) {
+                        //Tenemos sesión
+                        Log.i("SESIOM", "Sesión iniciada con el usuario " + user.getEmail());
 
-                    Intent usuarios_tengo_sesion = new Intent(Activity_Login.this, Activity_usuarios.class);
+                        Intent usuarios_tengo_sesion = new Intent(Activity_Login.this, Activity_usuarios.class);
 
-                    usuarios_tengo_sesion.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                            | Intent.FLAG_ACTIVITY_NEW_TASK
-                            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        usuarios_tengo_sesion.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                | Intent.FLAG_ACTIVITY_NEW_TASK
+                                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-                    //usuarios_tengo_sesion.putExtra("parametro_nick_propio",nick);
-                    usuarios_tengo_sesion.putExtra("parametro_nick_propio", nickPreferences);
-                    usuarios_tengo_sesion.putExtra("parametro_email_propio", emailPreferences);
-                    startActivity(usuarios_tengo_sesion);
-                    //cambiaEstadoUsuario(nickPreferences);
+                        //usuarios_tengo_sesion.putExtra("parametro_nick_propio",nick);
+                        usuarios_tengo_sesion.putExtra("parametro_nick_propio", nickPreferences);
+                        usuarios_tengo_sesion.putExtra("parametro_email_propio", emailPreferences);
+                        startActivity(usuarios_tengo_sesion);
+                        //cambiaEstadoUsuario(nickPreferences);
 
-                } else {
-                    Log.i("SESIOM", "Se ha cerrado la sesión del usuario ");
+                    }
+
+                    else {
+
+                        Log.i("SESIOM", "Se ha cerrado la sesión del usuario ");
+                    }
+
                 }
+            };
 
-            }
-        };
+
 
     }//Fin onCreate
 
@@ -120,7 +123,7 @@ public class Activity_Login extends AppCompatActivity implements View.OnClickLis
         btnRegistrar.setOnClickListener(this);
         progressBar = (ProgressBar) findViewById(R.id.barraProgreso);
         //mtorageReference= FirebaseStorage.getInstance().getReference();
-        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(REFERENCIA_USUARIOS);
+       // DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child(REFERENCIA_USUARIOS);
 
 
     }
@@ -152,7 +155,7 @@ public class Activity_Login extends AppCompatActivity implements View.OnClickLis
 
                             if (task.isSuccessful()) {
 
-                                String idUsuario=user.getUid();
+                                //String idUsuario=user.getUid();
 
                                 long fechaHora = System.currentTimeMillis();
                                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
@@ -161,13 +164,11 @@ public class Activity_Login extends AppCompatActivity implements View.OnClickLis
                                 //14 de Octubre se introduce el campo timeBorrado
                                 Usuarios usuario = new Usuarios(nick.trim(), nick.trim(), Stringfechahora, email.trim(), true, tokenNotify,IMAGE_DEFAULT,CONQUIENCHATEA,ESCRIBE,60000);
 
-
                                 generarPreferencias();
                                 crearUsuarioEnBBDD(usuario);
                                 //Se ejecuta automáticamente el intent y nos manda a ActivityUsuarios porque se llama a miListenrSesion = new FirebaseAuth.AuthStateListener()==>Línea 276
                                 Log.i("SESIOM", "Usuario creado correctamente ");
-                                Toast.makeText(btnRegistrar.getContext(), "Se ha creado el usuario correctamente", Toast.LENGTH_SHORT).show();
-
+                                Toast.makeText(btnRegistrar.getContext(), R.string.crearUsuario, Toast.LENGTH_SHORT).show();
 
                                 MisReferencias.USUARIO_CONECTADO = email.trim();
                                 hideProgress();
@@ -176,7 +177,7 @@ public class Activity_Login extends AppCompatActivity implements View.OnClickLis
                             } else {
 
                                 Log.e("SESIOM", task.getException().getMessage() + "Error creando usuario");
-                                Toast.makeText(btnLogin.getContext(), "Se ha producido el siguiente error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(btnLogin.getContext(), getString(R.string.errorCreandoUsuario) + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                                 hideProgress();
                             }
 
@@ -185,7 +186,7 @@ public class Activity_Login extends AppCompatActivity implements View.OnClickLis
                 }//Fin if(nick.isEmpty())
 
                 else {
-                    Toast.makeText(getBaseContext(), "Para registrarte como usuario debes rellenar los campos email, password y nick", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), R.string.avisoCreandoUsuario, Toast.LENGTH_LONG).show();
                     hideProgress();
                 }
 
@@ -194,7 +195,7 @@ public class Activity_Login extends AppCompatActivity implements View.OnClickLis
             case R.id.btnLogin:
                 showProgress();
                 if (nickPreferences.equals("DefaultUser")) {
-                    Toast.makeText(btnLogin.getContext(), "El usuario no tiene permisos para entrar en la aplicación.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(btnLogin.getContext(), R.string.usuarioNoPermisos, Toast.LENGTH_LONG).show();
                     hideProgress();
                     return;
                 }
@@ -210,10 +211,9 @@ public class Activity_Login extends AppCompatActivity implements View.OnClickLis
 
                             if (task.isSuccessful()) {
                                 Log.i("SESIOM", "Sesión iniciada correctamente ");
-                                Toast.makeText(btnLogin.getContext(), "Se ha iniciado sesión con  el usuario correctamente", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(btnLogin.getContext(), R.string.inicioSesion, Toast.LENGTH_SHORT).show();
 
-
-                                //Se ejecuta automáticamente el intent y nos manda a ActivityUsuarios porque se llama a miListenrSesion = new FirebaseAuth.AuthStateListener()==>Línea 276
+                                //Se ejecuta automáticamente el intent y nos manda a ActivityUsuarios porque se llama a miListenrSesion==>onCreate Línea 92
                                 MisReferencias.USUARIO_CONECTADO = email.trim();
 
                                 //finish();
@@ -221,14 +221,14 @@ public class Activity_Login extends AppCompatActivity implements View.OnClickLis
 
                             } else {
 
-                                Log.e("SESIOM", task.getException().getMessage() + "Error iniciado sesión");
-                                Toast.makeText(btnLogin.getContext(), "INFORMACIÓN PARA EL USUARIO: " + "\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                Log.e("SESION", task.getException().getMessage() + "Error iniciado sesión");
+                                Toast.makeText(btnLogin.getContext(), getString(R.string.errorIniciandoSesion) + "\n" + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                                 hideProgress();
                             }
                         }
                     });
                 } else {
-                    Toast.makeText(getBaseContext(), "Debes rellenar los campos email y password", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getBaseContext(), R.string.avisoIniciandoSesion, Toast.LENGTH_LONG).show();
                 }
 
                 hideProgress();
@@ -240,8 +240,6 @@ public class Activity_Login extends AppCompatActivity implements View.OnClickLis
 
         }
     }
-
-
 
     @Override//Añadimos nueva fuente
     protected void attachBaseContext(Context newBase) {

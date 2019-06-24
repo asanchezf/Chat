@@ -24,8 +24,10 @@ public class MyAplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();//Se aplica una fuente a toda la aplicación incluida en el directorio assets/font
+
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/Roboto-Regular")
+                //.setDefaultFontPath("fonts/Roboto-Regular")
+                .setDefaultFontPath("fonts/NotoMono-Regular")//03/01/2017 Se cambia la fuente....
                 .setFontAttrId(R.attr.fontPath)
                 .build()
         );

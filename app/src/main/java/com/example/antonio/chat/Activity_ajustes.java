@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -143,6 +144,7 @@ public class Activity_ajustes extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+        toolbar.setBackground(ContextCompat.getDrawable(this,R.drawable.degradado));
         imgFoto = (ImageView) findViewById(R.id.imgFoto);
         //imgFoto.setImageURI(imageUri);
         btnSetup = (Button) findViewById(R.id.btnSetup);
@@ -320,9 +322,9 @@ public class Activity_ajustes extends AppCompatActivity {
                     //.cropInitialCropWindowPaddingRatio(0)//El rectángulo ocupa toda la imagen
                     // .setOutputCompressFormat()
                     //.setOutputCompressQuality(50)
-                    //.setMaxCropResultSize(60,60)
+                    //.setMaxCropResultSize(500,500)
 
-                    .setActivityTitle("Acondicionar imagen")
+                    .setActivityTitle("Imagen elegida")
                     .setBorderCornerColor(getResources().getColor(R.color.md_purple_500))
                     .start(this);
 
@@ -338,8 +340,7 @@ public class Activity_ajustes extends AppCompatActivity {
                     //Convertimos la Uri en un bitmap para poder redimensionarlo y luego guardarlo en el storage de Firebase
                     mbitmap = Tratamiento_Imagenes.getThumbnail(uri_bitMap, this);
 
-                    File mediaFile;
-                    mediaFile = new File(mbitmap+ ".jpg");
+
 
                     mimageUri = result.getUri();
                     //imgFoto.setImageURI(mimageUri);
@@ -393,7 +394,7 @@ public class Activity_ajustes extends AppCompatActivity {
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
                     //Uri dowloadUri = taskSnapshot.getDownloadUrl();
-                    String dowloadString = taskSnapshot.getDownloadUrl().toString();//NO DA ERROR aunque subraye en rojo.
+                    String dowloadString = taskSnapshot.getDownloadUrl().toString();
 
                     //Se navega hasta el usuario logado y se modificar su campo image
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
