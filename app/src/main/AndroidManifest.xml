@@ -14,7 +14,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true" >
 
         <!-- SOLUCIÓN AL PROBLEMA DE FIREBASE POR EL QUE EL ICONO QUE SE PONÍA ERA DISTINTO ENTRE NOTIFICACIONES FOREGROUND Y BACKGROUND -->
         <!-- [START fcm_default_icon] -->
